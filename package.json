@@ -1,7 +1,24 @@
 {
   "name": "quick-lorem",
-  "version": "0.1.0",
-  "private": true,
+  "version": "1.0.0",
+  "author": {
+    "name": "Mikey Villavicencio",
+    "email": "villavicem@gmail.com"
+  },
+  "description": "A quick lorem ipsum generator",
+  "license": "MIT",
+  "keywords": [
+    "next",
+    "mantine",
+    "typescript",
+    "react",
+    "lorem"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mikikiv/quick-lorem.git"
+  },
+  "homepage": "https://quicklorem.dev/",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -9,6 +26,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.10.6",
+    "@emotion/server": "^11.10.0",
+    "@mantine/core": "^6.0.8",
+    "@mantine/hooks": "^6.0.8",
+    "@mantine/next": "^6.0.8",
+    "@tabler/icons-react": "2.17.0",
     "@types/node": "18.16.0",
     "@types/react": "18.0.38",
     "@types/react-dom": "18.0.11",

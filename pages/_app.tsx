@@ -92,7 +92,7 @@ function Layout({
             >
               <Group>
                 <Logo fill={colorScheme === "dark" ? "#eee" : "inherit"} />
-                <Title order={3}>fastlorem.dev</Title>
+                <Title order={3}>quicklorem.dev</Title>
               </Group>
             </Link>
             <ColorSwitcher />

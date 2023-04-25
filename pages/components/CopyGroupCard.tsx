@@ -1,4 +1,4 @@
-import { Button, Card, CopyButton, Group } from "@mantine/core"
+import { Button, Card, CopyButton, SimpleGrid } from "@mantine/core"
 import React from "react"
 
 type Props = {}
@@ -7,10 +7,16 @@ export default function CopyGroupCard({}: Props) {
   const arrayOfWords = ["this is", "an array", "of words"]
   return (
     <Card shadow="sm" padding="md" radius="md">
-      <Group position="apart" grow>
+      <SimpleGrid
+        cols={4}
+        breakpoints={[
+          { maxWidth: "62rem", cols: 3, spacing: "md" },
+          { maxWidth: "48rem", cols: 2, spacing: "sm" },
+          { maxWidth: "36rem", cols: 1, spacing: "sm" },
+        ]}
+      >
         <CopyGroup>
           <CopyButtons label={"Words[]"} text={JSON.stringify(arrayOfWords)} />
-
           <CopyButtons
             label={"1 Sentence"}
             text={
@@ -27,7 +33,7 @@ export default function CopyGroupCard({}: Props) {
           />
           <CopyButtons label={"Many Paragraphs"} text={manyParagraphs} />
         </CopyGroup>
-      </Group>
+      </SimpleGrid>
     </Card>
   )
 }
@@ -40,7 +46,7 @@ const CopyButtons = ({ label, text }: { label: string; text: string }) => {
     <CopyButton value={text}>
       {({ copied, copy }) => (
         <Button
-          size={"xl"}
+          size={"md"}
           variant={copied ? "light" : "outline"}
           color={"cyan"}
           onClick={copy}

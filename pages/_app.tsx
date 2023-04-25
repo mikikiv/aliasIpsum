@@ -2,17 +2,15 @@ import { AppProps } from "next/app"
 import Head from "next/head"
 import {
   AppShell,
-  Box,
   ColorScheme,
   ColorSchemeProvider,
   Group,
   Header,
   MantineProvider,
-  Text,
   Title,
 } from "@mantine/core"
 import { useHotkeys, useLocalStorage } from "@mantine/hooks"
-import { Logo } from "./components/logo"
+import Logo from "./components/logo"
 import ColorSwitcher from "./components/ColorSwitcher"
 import Link from "next/link"
 

@@ -1,10 +1,9 @@
 import Head from "next/head"
-import Image from "next/image"
 import { Inter } from "next/font/google"
 import styles from "@/styles/Home.module.css"
 import CopyGroupCard from "./components/CopyGroupCard"
 import { Container, SimpleGrid } from "@mantine/core"
-import { HomepageHero } from "./components/HomepageHero"
+import HomepageHero from "./components/HomepageHero"
 
 const inter = Inter({ subsets: ["latin"] })
 

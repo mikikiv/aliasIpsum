@@ -1,7 +1,7 @@
 import { Box, Container, Text, Title } from "@mantine/core"
 import React from "react"
 
-export function HomepageHero() {
+export default function HomepageHero() {
   return (
     <Box top={0} mt={0} pb={50}>
       <Container>

@@ -12,11 +12,11 @@ import {
   Title,
 } from "@mantine/core"
 import { useHotkeys, useLocalStorage } from "@mantine/hooks"
-import Logo from "./components/logo"
-import ColorSwitcher from "./components/ColorSwitcher"
+import Logo from "../components/logo"
+import ColorSwitcher from "../components/ColorSwitcher"
 import Link from "next/link"
 import { IconBrandGithub } from "@tabler/icons-react"
-import HomepageHero from "./components/HomepageHero"
+import HomepageHero from "../components/HomepageHero"
 import Script from "next/script"
 
 export default function App(props: AppProps) {

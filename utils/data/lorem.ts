@@ -1,4 +1,4 @@
-export interface Composition {
+interface Composition {
   textElement: string
   count: number
   type?: string

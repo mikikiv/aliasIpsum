@@ -1,8 +1,8 @@
 import Head from 'next/head'
 import { Inter } from 'next/font/google'
-import CopyGroupCard from './components/CopyGroupCard'
+import CopyGroupCard from '../components/CopyGroupCard'
 import { Container, SimpleGrid } from '@mantine/core'
-import { options } from '@/utils/data/options'
+import { options } from '@/utils/options'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -17,7 +17,7 @@ export default function Home() {
       <main>
         <Container>
           <SimpleGrid>
-            <CopyGroupCard options={options} />
+            <CopyGroupCard defaultOptions={options} />
           </SimpleGrid>
         </Container>
       </main>

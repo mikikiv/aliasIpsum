@@ -1,11 +1,10 @@
-import Head from "next/head"
-import { Inter } from "next/font/google"
-import styles from "@/styles/Home.module.css"
-import CopyGroupCard from "./components/CopyGroupCard"
-import { Container, SimpleGrid } from "@mantine/core"
-import HomepageHero from "./components/HomepageHero"
+import Head from 'next/head'
+import { Inter } from 'next/font/google'
+import CopyGroupCard from './components/CopyGroupCard'
+import { Container, SimpleGrid } from '@mantine/core'
+import { options } from '@/utils/data/options'
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
   return (
@@ -18,7 +17,7 @@ export default function Home() {
       <main>
         <Container>
           <SimpleGrid>
-            <CopyGroupCard />
+            <CopyGroupCard options={options} />
           </SimpleGrid>
         </Container>
       </main>

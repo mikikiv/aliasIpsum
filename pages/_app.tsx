@@ -2,7 +2,6 @@ import { AppProps } from "next/app"
 import Head from "next/head"
 import {
   AppShell,
-  Box,
   Button,
   ColorScheme,
   ColorSchemeProvider,
@@ -10,7 +9,6 @@ import {
   Group,
   Header,
   MantineProvider,
-  Text,
   Title,
 } from "@mantine/core"
 import { useHotkeys, useLocalStorage } from "@mantine/hooks"

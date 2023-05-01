@@ -1,14 +1,14 @@
 interface Composition {
   textElement: string
   count: number
-  type?: string
+  theme?: string
 }
 
-export const PlaceText = ({ textElement, count, type }: Composition) => {
+export const PlaceText = ({ textElement, count, theme }: Composition) => {
   let p
   switch (textElement) {
     case "sentences":
-      switch (type) {
+      switch (theme) {
         case lorem:
           p = lorem.split(". ")
           return p.slice(0, count).join(". ")
@@ -19,10 +19,9 @@ export const PlaceText = ({ textElement, count, type }: Composition) => {
           return p.slice(0, count).join(". ")
           break
       }
-
       break
     case "paragraphs":
-      switch (type) {
+      switch (theme) {
         case lorem:
           p = lorem.split("\n\n")
           return p.slice(0, count).join("\n\n")
@@ -33,8 +32,9 @@ export const PlaceText = ({ textElement, count, type }: Composition) => {
           return p.slice(0, count).join("\n\n")
           break
       }
+      break
     case "words":
-      switch (type) {
+      switch (theme) {
         case lorem:
           p = lorem.split(" ")
           return p.slice(0, count).join(" ")
@@ -45,18 +45,39 @@ export const PlaceText = ({ textElement, count, type }: Composition) => {
           return p.slice(0, count).join(" ")
           break
       }
+      break
     case "array":
-      switch (type) {
+      switch (theme) {
         case "lorem":
-          p = lorem.split(" ").slice(0, count)
-          p = JSON.stringify(p)
+          p = lorem.replaceAll(",", "").split(" ").slice(0, count)
+          p = JSON.stringify(p).replaceAll(".", "")
           return p
           break
         default:
-          p = lorem.split(" ").slice(0, count)
-          p = JSON.stringify(p)
+          p = lorem.replaceAll(",", "").split(" ").slice(0, count)
+          p = JSON.stringify(p).replaceAll(".", "")
           return p
           break
+      }
+      break
+    case "list":
+      switch (theme) {
+        case "lorem":
+          p = lorem
+            .replaceAll(",", "")
+            .split(" ")
+            .slice(0, count)
+            .join(", ")
+            .replaceAll(".", "")
+          return p
+        default:
+          p = lorem
+            .replaceAll(",", "")
+            .split(" ")
+            .slice(0, count)
+            .join(", ")
+            .replaceAll(".", "")
+          return p
       }
     default:
       return "I don't know what you want me to do"

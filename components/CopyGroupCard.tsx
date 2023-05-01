@@ -21,7 +21,7 @@ export default function CopyGroupCard({ defaultOptions }: Props) {
         text={PlaceText({
           textElement: option.textElement,
           count: option.count,
-          type: "lorem",
+          theme: "lorem",
         })}
       />
     )
@@ -94,6 +94,7 @@ export const CopyButtons = ({
           transitionProps={{ transition: "fade", duration: 500 }}
           openDelay={100}
           events={{ hover: true, focus: true, touch: false }}
+          style={{ lineBreak: "anywhere" }}
         >
           <Button
             size={"md"}

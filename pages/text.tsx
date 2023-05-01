@@ -1,6 +1,6 @@
-import React from 'react'
-import { PlaceText } from '../utils/data/lorem'
-import { Box, Text } from '@mantine/core'
+import React from "react"
+import { PlaceText } from "../utils/data/lorem"
+import { Box, Text } from "@mantine/core"
 
 type Props = {}
 
@@ -8,7 +8,7 @@ export default function text({}: Props) {
   return (
     <Box>
       <Text>
-        {PlaceText({ textElement: 'array', count: 10, type: 'lorem' })}
+        {PlaceText({ textElement: "array", count: 10, type: "lorem" })}
       </Text>
     </Box>
   )

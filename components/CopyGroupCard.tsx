@@ -1,6 +1,6 @@
-import { Button, Card, CopyButton, SimpleGrid, Tooltip } from '@mantine/core'
-import React from 'react'
-import { PlaceText } from '../utils/data/lorem'
+import { Button, Card, CopyButton, SimpleGrid, Tooltip } from "@mantine/core"
+import React from "react"
+import { PlaceText } from "../utils/data/lorem"
 
 interface Props {
   defaultOptions: {
@@ -21,7 +21,7 @@ export default function CopyGroupCard({ defaultOptions }: Props) {
         text={PlaceText({
           textElement: option.textElement,
           count: option.count,
-          type: 'lorem',
+          type: "lorem",
         })}
       />
     )
@@ -39,9 +39,9 @@ export default function CopyGroupCard({ defaultOptions }: Props) {
         cols={4}
         spacing="md"
         breakpoints={[
-          { maxWidth: '62rem', cols: 3, spacing: 'md' },
-          { maxWidth: '48rem', cols: 2, spacing: 'sm' },
-          { maxWidth: '36rem', cols: 1, spacing: 'sm' },
+          { maxWidth: "62rem", cols: 3, spacing: "md" },
+          { maxWidth: "48rem", cols: 2, spacing: "sm" },
+          { maxWidth: "36rem", cols: 1, spacing: "sm" },
         ]}
       >
         {Object.keys(groupedOptions).map((textElement) => (
@@ -65,20 +65,20 @@ export const CopyButtons = ({
 }) => {
   const colorScheme: string = (() => {
     switch (textElement) {
-      case 'sentences':
-        return 'teal'
+      case "sentences":
+        return "teal"
         break
-      case 'paragraphs':
-        return 'indigo'
+      case "paragraphs":
+        return "indigo"
         break
-      case 'words':
-        return 'red'
+      case "words":
+        return "red"
         break
-      case 'array':
-        return 'yellow'
+      case "array":
+        return "yellow"
         break
       default:
-        return 'black'
+        return "black"
         break
     }
   })()
@@ -91,15 +91,15 @@ export const CopyButtons = ({
           withinPortal
           multiline
           maw={400}
-          transitionProps={{ transition: 'fade', duration: 500 }}
+          transitionProps={{ transition: "fade", duration: 500 }}
           openDelay={100}
           events={{ hover: true, focus: true, touch: false }}
         >
           <Button
-            size={'md'}
+            size={"md"}
             h={100}
             color={colorScheme}
-            variant={copied ? 'light' : 'outline'}
+            variant={copied ? "light" : "outline"}
             onClick={copy}
           >
             {copied ? `Copied ${label}` : label}

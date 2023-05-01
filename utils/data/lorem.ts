@@ -7,53 +7,53 @@ interface Composition {
 export const PlaceText = ({ textElement, count, type }: Composition) => {
   let p
   switch (textElement) {
-    case 'sentences':
+    case "sentences":
       switch (type) {
         case lorem:
-          p = lorem.split('. ')
-          return p.slice(0, count).join('. ')
+          p = lorem.split(". ")
+          return p.slice(0, count).join(". ")
           break
 
         default:
-          p = lorem.split('. ')
-          return p.slice(0, count).join('. ')
+          p = lorem.split(". ")
+          return p.slice(0, count).join(". ")
           break
       }
 
       break
-    case 'paragraphs':
+    case "paragraphs":
       switch (type) {
         case lorem:
-          p = lorem.split('\n\n')
-          return p.slice(0, count).join('\n\n')
+          p = lorem.split("\n\n")
+          return p.slice(0, count).join("\n\n")
           break
 
         default:
-          p = lorem.split('\n\n')
-          return p.slice(0, count).join('\n\n')
+          p = lorem.split("\n\n")
+          return p.slice(0, count).join("\n\n")
           break
       }
-    case 'words':
+    case "words":
       switch (type) {
         case lorem:
-          p = lorem.split(' ')
-          return p.slice(0, count).join(' ')
+          p = lorem.split(" ")
+          return p.slice(0, count).join(" ")
           break
 
         default:
-          p = lorem.split(' ')
-          return p.slice(0, count).join(' ')
+          p = lorem.split(" ")
+          return p.slice(0, count).join(" ")
           break
       }
-    case 'array':
+    case "array":
       switch (type) {
-        case 'lorem':
-          p = lorem.split(' ').slice(0, count)
+        case "lorem":
+          p = lorem.split(" ").slice(0, count)
           p = JSON.stringify(p)
           return p
           break
         default:
-          p = lorem.split(' ').slice(0, count)
+          p = lorem.split(" ").slice(0, count)
           p = JSON.stringify(p)
           return p
           break

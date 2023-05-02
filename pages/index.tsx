@@ -4,6 +4,7 @@ import CopyGroupCard from "../components/CopyGroupCard"
 import { Container, Select, SimpleGrid } from "@mantine/core"
 import { options } from "@/utils/options"
 import { useState } from "react"
+import InputCreator from "@/components/InputCreator"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -36,6 +37,7 @@ export default function Home() {
               onChange={(value) => setTheme(value as string)}
             />
             <CopyGroupCard defaultOptions={options} theme={theme} />
+            <InputCreator />
           </SimpleGrid>
         </Container>
       </main>

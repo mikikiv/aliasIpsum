@@ -1,5 +1,5 @@
 import React from "react"
-import { PlaceText } from "../utils/data/lorem"
+import { PlaceText } from "../utils/transformer"
 import { Box, Text } from "@mantine/core"
 
 type Props = {}

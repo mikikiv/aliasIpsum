@@ -20,18 +20,13 @@ export const options = [
     count: 2,
   },
   {
-    label: "1 Word",
-    textElement: "words",
-    count: 1,
-  },
-  {
-    label: "2 Words",
-    textElement: "words",
-    count: 2,
-  },
-  {
     label: "Array",
     textElement: "array",
-    count: 4,
+    count: 8,
+  },
+  {
+    label: "List",
+    textElement: "list",
+    count: 8,
   },
 ]

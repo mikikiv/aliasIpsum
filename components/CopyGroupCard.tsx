@@ -1,8 +1,16 @@
-import { Button, Card, CopyButton, SimpleGrid, Tooltip } from "@mantine/core"
-import React from "react"
-import { PlaceText } from "../utils/data/lorem"
+import {
+  Button,
+  Card,
+  CopyButton,
+  Select,
+  SimpleGrid,
+  Tooltip,
+} from "@mantine/core"
+import React, { useState } from "react"
+import { PlaceText } from "../utils/transformer"
 
 interface Props {
+  theme: string
   defaultOptions: {
     label: string
     textElement: string
@@ -10,7 +18,7 @@ interface Props {
   }[]
 }
 
-export default function CopyGroupCard({ defaultOptions }: Props) {
+export default function CopyGroupCard({ theme, defaultOptions }: Props) {
   const groupedOptions = defaultOptions.reduce((acc, option) => {
     const key = option.textElement
     const copyButton = (
@@ -21,7 +29,7 @@ export default function CopyGroupCard({ defaultOptions }: Props) {
         text={PlaceText({
           textElement: option.textElement,
           count: option.count,
-          type: "lorem",
+          theme: theme,
         })}
       />
     )
@@ -34,23 +42,25 @@ export default function CopyGroupCard({ defaultOptions }: Props) {
   }, {} as { [key: string]: JSX.Element[] })
 
   return (
-    <Card shadow="sm" padding="md" radius="md">
-      <SimpleGrid
-        cols={4}
-        spacing="md"
-        breakpoints={[
-          { maxWidth: "62rem", cols: 3, spacing: "md" },
-          { maxWidth: "48rem", cols: 2, spacing: "sm" },
-          { maxWidth: "36rem", cols: 1, spacing: "sm" },
-        ]}
-      >
-        {Object.keys(groupedOptions).map((textElement) => (
-          <Button.Group orientation="vertical" key={textElement}>
-            {groupedOptions[textElement]}
-          </Button.Group>
-        ))}
-      </SimpleGrid>
-    </Card>
+    <>
+      <Card shadow="sm" padding="md" radius="md">
+        <SimpleGrid
+          cols={4}
+          spacing="md"
+          breakpoints={[
+            { maxWidth: "62rem", cols: 3, spacing: "md" },
+            { maxWidth: "48rem", cols: 2, spacing: "sm" },
+            { maxWidth: "36rem", cols: 1, spacing: "sm" },
+          ]}
+        >
+          {Object.keys(groupedOptions).map((textElement) => (
+            <Button.Group orientation="vertical" key={textElement}>
+              {groupedOptions[textElement]}
+            </Button.Group>
+          ))}
+        </SimpleGrid>
+      </Card>
+    </>
   )
 }
 
@@ -94,6 +104,7 @@ export const CopyButtons = ({
           transitionProps={{ transition: "fade", duration: 500 }}
           openDelay={100}
           events={{ hover: true, focus: true, touch: false }}
+          style={{ lineBreak: "anywhere" }}
         >
           <Button
             size={"md"}

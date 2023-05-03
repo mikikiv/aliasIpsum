@@ -33,10 +33,6 @@ export default function InputCreator({}: Props) {
     const localEmail = localStorage.getItem("email")
     //on page load, check if there is a saved email in local storage
     setEmail(localEmail || "")
-    //if there is, set the email state to that value and add the timestamp alias to it
-    setAliasedEmail(
-      addAliasToEmail(localEmail || "", selectedAlias || Date.now().toString())
-    )
   }, [])
 
   useEffect(() => {

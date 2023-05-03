@@ -12,7 +12,19 @@ import {
   Tooltip,
   rem,
 } from "@mantine/core"
-import { IconAlertCircle, IconCopy, IconMail } from "@tabler/icons-react"
+import {
+  IconAlertCircle,
+  IconCopy,
+  IconDoorExit,
+  IconEdit,
+  IconHomeCancel,
+  IconHttpDelete,
+  IconMail,
+  IconPointerCancel,
+  IconSettings,
+  IconSettingsCancel,
+  IconX,
+} from "@tabler/icons-react"
 import { useEffect, useState } from "react"
 
 type Props = {}
@@ -69,20 +81,30 @@ export default function InputCreator({}: Props) {
     setAliases((current) => [...current, newAlias])
     localStorage.setItem("aliases", JSON.stringify([...aliases, newAlias]))
   }
+  const [editingAliases, setEditingAliases] = useState(false)
+
+  const handleDeleteAlias = (alias: string) => {
+    const newAliases = aliases.filter((a) => a.value !== alias)
+    setAliases(newAliases)
+    localStorage.setItem("aliases", JSON.stringify(newAliases))
+    if (aliases.length === 1) {
+      setEditingAliases(false)
+    }
+  }
 
   return (
     <Card>
       <Container>
         <Grid>
-          <Grid.Col span={1} my={"auto"}></Grid.Col>
-          <Grid.Col span={10} my={"auto"}>
+          <Grid.Col span={1}></Grid.Col>
+          <Grid.Col span={10}>
             <Text> Aliased Emails</Text>
           </Grid.Col>
-          <Grid.Col span={1} my={"auto"}></Grid.Col>
+          <Grid.Col span={1}></Grid.Col>
         </Grid>
         <Grid>
-          <Grid.Col span={1} my={"auto"}></Grid.Col>
-          <Grid.Col span={7} my={"auto"}>
+          <Grid.Col span={1}></Grid.Col>
+          <Grid.Col span={7}>
             <Input.Wrapper
               description={
                 "Aliased emails are a way to create additional email addresses that forward incoming messages to your primary email account. "
@@ -111,28 +133,80 @@ export default function InputCreator({}: Props) {
               />
             </Input.Wrapper>
           </Grid.Col>
-          <Grid.Col span={3} my={"auto"}>
-            <Select
-              clearable
-              allowDeselect
-              placeholder="Timestamp"
-              data={aliases}
-              label={"Customize Alias"}
-              searchable
-              creatable
-              onChange={(value) => {
-                setSelectedAlias(value as string)
-              }}
-              getCreateLabel={(query) =>
-                `Use "${query.trim().replaceAll(/\W/g, "")}" as alias`
-              }
-              onCreate={(query) => {
-                handleCreateAlias(query)
-                return query.trim().replaceAll(/\W/g, "")
-              }}
-            />
+          <Grid.Col span={3}>
+            <Box p={rem(10)}>
+              Customize Aliases
+              {aliases.length > 0 ? (
+                !editingAliases ? (
+                  <IconSettings
+                    size="1rem"
+                    style={{
+                      opacity: 0.5,
+                      float: "right",
+                      marginRight: 6,
+                      cursor: "pointer",
+                    }}
+                    onClick={() => {
+                      setEditingAliases(!editingAliases)
+                    }}
+                  />
+                ) : (
+                  <IconSettingsCancel
+                    size="1rem"
+                    style={{
+                      opacity: 0.5,
+                      float: "right",
+                      marginRight: 6,
+                      cursor: "pointer",
+                    }}
+                    onClick={() => {
+                      setEditingAliases(!editingAliases)
+                    }}
+                  />
+                )
+              ) : null}
+              {editingAliases ? (
+                <SimpleGrid cols={1} spacing={5}>
+                  {aliases.map((alias) => (
+                    <Button
+                      fullWidth
+                      color={"red"}
+                      rightIcon={
+                        <IconX
+                          size="1rem"
+                          style={{ right: 6, position: "absolute" }}
+                          onClick={() => handleDeleteAlias(alias.value)}
+                        />
+                      }
+                      key={alias.value}
+                    >
+                      {alias.value}
+                    </Button>
+                  ))}
+                </SimpleGrid>
+              ) : (
+                <Select
+                  clearable
+                  allowDeselect
+                  placeholder="Timestamp"
+                  data={aliases}
+                  searchable
+                  creatable
+                  onChange={(value) => {
+                    setSelectedAlias(value as string)
+                  }}
+                  getCreateLabel={(query) =>
+                    `Use "${query.trim().replaceAll(/\W/g, "")}" as alias`
+                  }
+                  onCreate={(query) => {
+                    handleCreateAlias(query)
+                    return query.trim().replaceAll(/\W/g, "")
+                  }}
+                />
+              )}
+            </Box>
           </Grid.Col>
-          <Grid.Col span={1} my={"auto"}></Grid.Col>
+          <Grid.Col span={1}></Grid.Col>
           <CopyButton value={aliasedEmail}>
             {({ copied, copy }) => (
               <>

@@ -22,20 +22,25 @@ type Alias = {
 export default function InputCreator({}: Props) {
   const [email, setEmail] = useState("")
   const [aliases, setAliases] = useState([] as Alias[])
+  const [selectedAlias, setSelectedAlias] = useState("")
+  const [aliasedEmail, setAliasedEmail] = useState("")
+
+  const addAliasToEmail = (email: string, alias: string) => {
+    return email.split("@").join(`+${alias}@`)
+  }
 
   useEffect(() => {
     const localEmail = localStorage.getItem("email")
+    //on page load, check if there is a saved email in local storage
     setEmail(localEmail || "")
-    const localAliases = localStorage.getItem("aliases")
-    setAliases(
-      localAliases && localAliases.length > 2
-        ? JSON.parse(localAliases)
-        : [
-            { label: "timestamp", value: Date.now().toString() },
-            { label: "timestamp2", value: "moretext" },
-          ]
-    )
   }, [])
+
+  useEffect(() => {
+    //every time the selected alias changes, update the aliased email
+    setAliasedEmail(
+      addAliasToEmail(email, selectedAlias || Date.now().toString())
+    )
+  }, [email, selectedAlias])
 
   const validateEmail = (email: string) => {
     const re = /\S+@\S+\.\S+/
@@ -44,11 +49,12 @@ export default function InputCreator({}: Props) {
 
   const handleChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value)
+    setAliasedEmail(
+      addAliasToEmail(e.target.value, selectedAlias || Date.now().toString())
+    )
     localStorage.setItem("email", e.target.value)
   }
 
-  const [selectedAlias, setSelectedAlias] = useState("timestamp")
-  const aliasedEmail = email.split("@").join(`+${selectedAlias}@`)
   const handleCreateAlias = (query: string) => {
     const newAlias = {
       label: query,
@@ -56,10 +62,6 @@ export default function InputCreator({}: Props) {
     }
     setAliases((current) => [...current, newAlias])
   }
-
-  useEffect(() => {
-    localStorage.setItem("aliases", JSON.stringify(aliases))
-  }, [aliases])
 
   return (
     <>
@@ -98,7 +100,9 @@ export default function InputCreator({}: Props) {
           </Grid.Col>
           <Grid.Col span={4} my={"auto"}>
             <Select
-              defaultValue={selectedAlias}
+              clearable
+              allowDeselect
+              placeholder="Timestamp"
               data={aliases}
               label={"Custom Alias"}
               searchable

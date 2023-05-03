@@ -96,15 +96,12 @@ export default function InputCreator({}: Props) {
     <Card>
       <Container>
         <Grid>
-          <Grid.Col span={1}></Grid.Col>
-          <Grid.Col span={10}>
+          <Grid.Col span={12}>
             <Text> Aliased Emails</Text>
           </Grid.Col>
-          <Grid.Col span={1}></Grid.Col>
         </Grid>
         <Grid>
-          <Grid.Col span={1}></Grid.Col>
-          <Grid.Col span={7}>
+          <Grid.Col span={8}>
             <Input.Wrapper
               description={
                 "Aliased emails are a way to create additional email addresses that forward incoming messages to your primary email account. "
@@ -133,7 +130,7 @@ export default function InputCreator({}: Props) {
               />
             </Input.Wrapper>
           </Grid.Col>
-          <Grid.Col span={3}>
+          <Grid.Col span={4}>
             <Box p={rem(10)}>
               Customize Aliases
               {aliases.length > 0 ? (
@@ -206,7 +203,6 @@ export default function InputCreator({}: Props) {
               )}
             </Box>
           </Grid.Col>
-          <Grid.Col span={1}></Grid.Col>
           <CopyButton value={aliasedEmail}>
             {({ copied, copy }) => (
               <>

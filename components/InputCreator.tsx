@@ -1,7 +1,9 @@
 import {
   Box,
+  Button,
   Card,
   Container,
+  CopyButton,
   Grid,
   Input,
   Select,
@@ -10,7 +12,7 @@ import {
   Tooltip,
   rem,
 } from "@mantine/core"
-import { IconAlertCircle, IconMail } from "@tabler/icons-react"
+import { IconAlertCircle, IconCopy, IconMail } from "@tabler/icons-react"
 import { useEffect, useState } from "react"
 
 type Props = {}
@@ -31,8 +33,12 @@ export default function InputCreator({}: Props) {
 
   useEffect(() => {
     const localEmail = localStorage.getItem("email")
-    //on page load, check if there is a saved email in local storage
     setEmail(localEmail || "")
+    // check for aliases in local storage
+    const localAliases = localStorage.getItem("aliases")
+    if (localAliases) {
+      setAliases(JSON.parse(localAliases))
+    }
   }, [])
 
   useEffect(() => {
@@ -61,15 +67,23 @@ export default function InputCreator({}: Props) {
       value: query.trim().replaceAll(" ", ""),
     }
     setAliases((current) => [...current, newAlias])
+    localStorage.setItem("aliases", JSON.stringify([...aliases, newAlias]))
   }
 
   return (
-    <>
+    <Card>
       <Container>
         <Grid>
-          <Grid.Col span={8} my={"auto"}>
+          <Grid.Col span={1} my={"auto"}></Grid.Col>
+          <Grid.Col span={10} my={"auto"}>
+            <Text> Aliased Emails</Text>
+          </Grid.Col>
+          <Grid.Col span={1} my={"auto"}></Grid.Col>
+        </Grid>
+        <Grid>
+          <Grid.Col span={1} my={"auto"}></Grid.Col>
+          <Grid.Col span={7} my={"auto"}>
             <Input.Wrapper
-              label={"Aliased email"}
               description={
                 "Aliased emails are a way to create additional email addresses that forward incoming messages to your primary email account. "
               }
@@ -77,10 +91,10 @@ export default function InputCreator({}: Props) {
               <Input
                 icon={<IconMail size="1rem" />}
                 radius={"xl"}
-                placeholder="Use your real email, we cannot see anything you input here"
+                placeholder="email@example.com"
                 onChange={handleChangeEmail}
                 value={email}
-                error={email.length > 0 && !validateEmail(email)}
+                // error={email.length > 0 && !validateEmail(email)}
                 rightSection={
                   <Tooltip
                     label="Your email is only saved to your current browser for your convenience."
@@ -96,31 +110,49 @@ export default function InputCreator({}: Props) {
                 }
               />
             </Input.Wrapper>
-            <Text>{aliasedEmail}</Text>
           </Grid.Col>
-          <Grid.Col span={4} my={"auto"}>
+          <Grid.Col span={3} my={"auto"}>
             <Select
               clearable
               allowDeselect
               placeholder="Timestamp"
               data={aliases}
-              label={"Custom Alias"}
+              label={"Customize Alias"}
               searchable
               creatable
               onChange={(value) => {
                 setSelectedAlias(value as string)
               }}
               getCreateLabel={(query) =>
-                `Use "${query.trim().replaceAll(" ", "")}" as alias`
+                `Use "${query.trim().replaceAll(/\W/g, "")}" as alias`
               }
               onCreate={(query) => {
                 handleCreateAlias(query)
-                return query.trim().replaceAll(" ", "")
+                return query.trim().replaceAll(/\W/g, "")
               }}
             />
           </Grid.Col>
+          <Grid.Col span={1} my={"auto"}></Grid.Col>
+          <CopyButton value={aliasedEmail}>
+            {({ copied, copy }) => (
+              <>
+                <Button
+                  variant="outline"
+                  h={100}
+                  w={"100%"}
+                  mt={rem(10)}
+                  sx={{ float: "right" }}
+                  onClick={copy}
+                  rightIcon={<IconCopy />}
+                  disabled={!validateEmail(email) || email.length === 0}
+                >
+                  {copied ? `Copied ${aliasedEmail}` : `${aliasedEmail}`}
+                </Button>
+              </>
+            )}
+          </CopyButton>
         </Grid>
       </Container>
-    </>
+    </Card>
   )
 }

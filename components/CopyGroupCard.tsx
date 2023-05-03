@@ -1,11 +1,4 @@
-import {
-  Button,
-  Card,
-  CopyButton,
-  Select,
-  SimpleGrid,
-  Tooltip,
-} from "@mantine/core"
+import { Button, Card, CopyButton, SimpleGrid, Tooltip } from "@mantine/core"
 import React, { useState } from "react"
 import { PlaceText } from "../utils/transformer"
 

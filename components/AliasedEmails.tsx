@@ -11,6 +11,7 @@ import {
   Tooltip,
   rem,
 } from "@mantine/core"
+import { useLocalStorage } from "@mantine/hooks"
 
 import {
   IconAlertCircle,
@@ -29,24 +30,17 @@ type Alias = {
 }
 
 export default function InputCreator({}: Props) {
-  const [email, setEmail] = useState("")
-  const [aliases, setAliases] = useState([] as Alias[])
+  const [email, setEmail] = useLocalStorage({ key: "email", defaultValue: "" })
+  const [aliases, setAliases] = useLocalStorage({
+    key: "aliases",
+    defaultValue: [] as Alias[],
+  })
   const [selectedAlias, setSelectedAlias] = useState("")
   const [aliasedEmail, setAliasedEmail] = useState("")
 
   const addAliasToEmail = (email: string, alias: string) => {
     return email.split("@").join(`+${alias}@`)
   }
-
-  useEffect(() => {
-    const localEmail = localStorage.getItem("email")
-    setEmail(localEmail || "")
-    // check for aliases in local storage
-    const localAliases = localStorage.getItem("aliases")
-    if (localAliases) {
-      setAliases(JSON.parse(localAliases))
-    }
-  }, [])
 
   useEffect(() => {
     //every time the selected alias changes, update the aliased email
@@ -65,25 +59,19 @@ export default function InputCreator({}: Props) {
     setAliasedEmail(
       addAliasToEmail(e.target.value, selectedAlias || Date.now().toString())
     )
-    localStorage.setItem("email", e.target.value)
   }
 
   const handleCreateAlias = (query: string) => {
-    const newAlias = {
-      label: query,
-      value: query.trim().replaceAll(" ", ""),
-    }
-    setAliases((current) => [...current, newAlias])
-    localStorage.setItem("aliases", JSON.stringify([...aliases, newAlias]))
+    setAliases([...aliases, { label: query, value: query }])
   }
   const [editingAliases, setEditingAliases] = useState(false)
 
   const handleDeleteAlias = (alias: string) => {
     const newAliases = aliases.filter((a) => a.value !== alias)
     setAliases(newAliases)
-    localStorage.setItem("aliases", JSON.stringify(newAliases))
     if (aliases.length === 1) {
       setEditingAliases(false)
+      setSelectedAlias("")
     }
   }
 

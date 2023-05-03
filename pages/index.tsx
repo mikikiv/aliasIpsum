@@ -4,7 +4,7 @@ import TextGeneration from "../components/TextGeneration"
 import { Card, Container, Select, SimpleGrid } from "@mantine/core"
 import { options } from "@/utils/options"
 import { useState } from "react"
-import InputCreator from "@/components/InputCreator"
+import AliasedEmails from "@/components/AliasedEmails"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -20,7 +20,7 @@ export default function Home() {
         <Container>
           <SimpleGrid>
             <TextGeneration defaultOptions={options} />
-            <InputCreator />
+            <AliasedEmails />
           </SimpleGrid>
         </Container>
       </main>

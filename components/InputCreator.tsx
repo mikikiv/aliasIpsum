@@ -2,7 +2,6 @@ import {
   Box,
   Button,
   Card,
-  Container,
   CopyButton,
   Grid,
   Input,
@@ -12,15 +11,11 @@ import {
   Tooltip,
   rem,
 } from "@mantine/core"
+
 import {
   IconAlertCircle,
   IconCopy,
-  IconDoorExit,
-  IconEdit,
-  IconHomeCancel,
-  IconHttpDelete,
   IconMail,
-  IconPointerCancel,
   IconSettings,
   IconSettingsCancel,
   IconX,
@@ -93,125 +88,122 @@ export default function InputCreator({}: Props) {
   }
 
   return (
-    <Card>
-      <Container>
-        <Grid>
-          <Grid.Col span={12}>
-            <Text> Aliased Emails</Text>
-          </Grid.Col>
-        </Grid>
-        <Grid>
-          <Grid.Col span={8}>
-            <Input.Wrapper
-              description={
-                "Aliased emails are a way to create additional email addresses that forward incoming messages to your primary email account. "
+    <Card shadow="sm" padding="md" radius="md">
+      <Grid>
+        <Grid.Col span={12}>
+          <Text> Aliased Emails</Text>
+        </Grid.Col>
+        <Grid.Col span={8}>
+          <Input.Wrapper
+            description={
+              "Aliased emails are a way to create additional email addresses that forward incoming messages to your primary email account. "
+            }
+          >
+            <Input
+              icon={<IconMail size="1rem" />}
+              radius={"xl"}
+              placeholder="email@example.com"
+              onChange={handleChangeEmail}
+              value={email}
+              // error={email.length > 0 && !validateEmail(email)}
+              rightSection={
+                <Tooltip
+                  label="Your email is only saved to your current browser for your convenience."
+                  position="left"
+                >
+                  <div>
+                    <IconAlertCircle
+                      size="1rem"
+                      style={{ display: "block", opacity: 0.5 }}
+                    />
+                  </div>
+                </Tooltip>
               }
-            >
-              <Input
-                icon={<IconMail size="1rem" />}
-                radius={"xl"}
-                placeholder="email@example.com"
-                onChange={handleChangeEmail}
-                value={email}
-                // error={email.length > 0 && !validateEmail(email)}
-                rightSection={
-                  <Tooltip
-                    label="Your email is only saved to your current browser for your convenience."
-                    position="left"
-                  >
-                    <div>
-                      <IconAlertCircle
-                        size="1rem"
-                        style={{ display: "block", opacity: 0.5 }}
-                      />
-                    </div>
-                  </Tooltip>
-                }
-              />
-            </Input.Wrapper>
-          </Grid.Col>
-          <Grid.Col span={4}>
-            <Box p={rem(10)}>
-              Customize Aliases
-              {aliases.length > 0 ? (
-                !editingAliases ? (
-                  <IconSettings
-                    size="1rem"
-                    style={{
-                      opacity: 0.5,
-                      float: "right",
-                      marginRight: 6,
-                      cursor: "pointer",
-                    }}
-                    onClick={() => {
-                      setEditingAliases(!editingAliases)
-                    }}
-                  />
-                ) : (
-                  <IconSettingsCancel
-                    size="1rem"
-                    style={{
-                      opacity: 0.5,
-                      float: "right",
-                      marginRight: 6,
-                      cursor: "pointer",
-                    }}
-                    onClick={() => {
-                      setEditingAliases(!editingAliases)
-                    }}
-                  />
-                )
-              ) : null}
-              {editingAliases ? (
-                <SimpleGrid cols={1} spacing={5}>
-                  {aliases.map((alias) => (
-                    <Button
-                      fullWidth
-                      color={"red"}
-                      rightIcon={
-                        <IconX
-                          size="1rem"
-                          style={{ right: 6, position: "absolute" }}
-                          onClick={() => handleDeleteAlias(alias.value)}
-                        />
-                      }
-                      key={alias.value}
-                    >
-                      {alias.value}
-                    </Button>
-                  ))}
-                </SimpleGrid>
-              ) : (
-                <Select
-                  clearable
-                  allowDeselect
-                  placeholder="Timestamp"
-                  data={aliases}
-                  searchable
-                  creatable
-                  onChange={(value) => {
-                    setSelectedAlias(value as string)
+            />
+          </Input.Wrapper>
+        </Grid.Col>
+        <Grid.Col span={4}>
+          <Box p={rem(10)}>
+            Customize Aliases
+            {aliases.length > 0 ? (
+              !editingAliases ? (
+                <IconSettings
+                  size="1rem"
+                  style={{
+                    opacity: 0.5,
+                    float: "right",
+                    marginRight: 6,
+                    cursor: "pointer",
                   }}
-                  getCreateLabel={(query) =>
-                    `Use "${query.trim().replaceAll(/\W/g, "")}" as alias`
-                  }
-                  onCreate={(query) => {
-                    handleCreateAlias(query)
-                    return query.trim().replaceAll(/\W/g, "")
+                  onClick={() => {
+                    setEditingAliases(!editingAliases)
                   }}
                 />
-              )}
-            </Box>
-          </Grid.Col>
+              ) : (
+                <IconSettingsCancel
+                  size="1rem"
+                  style={{
+                    opacity: 0.5,
+                    float: "right",
+                    marginRight: 6,
+                    cursor: "pointer",
+                  }}
+                  onClick={() => {
+                    setEditingAliases(!editingAliases)
+                  }}
+                />
+              )
+            ) : null}
+            {editingAliases ? (
+              <SimpleGrid cols={1} spacing={5}>
+                {aliases.map((alias) => (
+                  <Button
+                    fullWidth
+                    color={"red"}
+                    rightIcon={
+                      <IconX
+                        size="1rem"
+                        style={{ right: 6, position: "absolute" }}
+                        onClick={() => handleDeleteAlias(alias.value)}
+                      />
+                    }
+                    key={alias.value}
+                  >
+                    {alias.value}
+                  </Button>
+                ))}
+              </SimpleGrid>
+            ) : (
+              <Select
+                clearable
+                allowDeselect
+                placeholder="Timestamp"
+                data={aliases}
+                searchable
+                creatable
+                onChange={(value) => {
+                  setSelectedAlias(value as string)
+                }}
+                getCreateLabel={(query) =>
+                  `Use "${query.trim().replaceAll(/\W/g, "")}" as alias`
+                }
+                onCreate={(query) => {
+                  handleCreateAlias(query)
+                  return query.trim().replaceAll(/\W/g, "")
+                }}
+              />
+            )}
+          </Box>
+        </Grid.Col>
+        <Grid.Col span={12}>
           <CopyButton value={aliasedEmail}>
             {({ copied, copy }) => (
               <>
                 <Button
-                  variant="outline"
+                  size={"md"}
                   h={100}
-                  w={"100%"}
-                  mt={rem(10)}
-                  sx={{ float: "right" }}
+                  fullWidth
+                  variant={copied ? "light" : "outline"}
                   onClick={copy}
                   rightIcon={<IconCopy />}
                   disabled={!validateEmail(email) || email.length === 0}
@@ -221,8 +213,8 @@ export default function InputCreator({}: Props) {
               </>
             )}
           </CopyButton>
-        </Grid>
-      </Container>
+        </Grid.Col>
+      </Grid>
     </Card>
   )
 }

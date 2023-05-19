@@ -1,4 +1,5 @@
 import { AppProps } from "next/app"
+import { Analytics } from "@vercel/analytics/react"
 import Head from "next/head"
 import {
   AppShell,
@@ -66,6 +67,7 @@ export default function App(props: AppProps) {
         >
           <Layout colorScheme={colorScheme} p={"xl"}>
             <Component {...pageProps} />
+            <Analytics />
           </Layout>
         </MantineProvider>
       </ColorSchemeProvider>

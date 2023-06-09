@@ -208,6 +208,16 @@ export default function InputCreator({}: Props) {
                   handleCreateAlias(query)
                   return query.trim().replaceAll(/\W/g, "")
                 }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault()
+                    handleCreateAlias(e.currentTarget.value)
+                    setSelectedAlias(
+                      e.currentTarget.value.trim().replaceAll(/\W/g, "")
+                    )
+                    e.currentTarget.value = ""
+                  }
+                }}
               />
             )}
           </Box>

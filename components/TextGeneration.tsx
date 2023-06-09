@@ -17,6 +17,7 @@ interface Props {
     label: string
     textElement: string
     count: number
+    depth?: number
   }[]
 }
 
@@ -32,6 +33,7 @@ export default function CopyGroupCard({ defaultOptions }: Props) {
         text={PlaceText({
           textElement: option.textElement,
           count: option.count,
+          depth: option.depth,
           theme: theme,
         })}
       />
@@ -108,6 +110,8 @@ export const CopyButtons = ({
         return "indigo"
       case "words":
         return "red"
+      case "json":
+        return "orange"
       case "array":
         return "yellow"
       default:

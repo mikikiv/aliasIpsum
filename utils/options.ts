@@ -1,3 +1,8 @@
+/**
+ * Options for the text generator
+ * Stored in an array of objects to make the options easier to iterate over and change
+ */
+
 export const options = [
   {
     label: "1 Sentence",
@@ -18,6 +23,18 @@ export const options = [
     label: "2 Paragraphs",
     textElement: "paragraphs",
     count: 2,
+  },
+  {
+    label: "Simple JSON",
+    textElement: "json",
+    count: 5,
+    depth: 1,
+  },
+  {
+    label: "Deep JSON",
+    textElement: "json",
+    count: 5,
+    depth: 3,
   },
   {
     label: "Array",

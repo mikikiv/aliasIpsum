@@ -37,7 +37,7 @@ export default function InputCreator({}: Props) {
   })
   const [selectedAlias, setSelectedAlias] = useState("")
   const [aliasedEmail, setAliasedEmail] = useState("")
-  const [aliasedEmailWithTimestamp, setAliasedEmailWithTimestamp] = useState("")
+  const [realtimeTimestamp, setRealtimeTimestamp] = useState("")
 
   const timestamp = new Date(Date.now())
     .toISOString()
@@ -45,20 +45,37 @@ export default function InputCreator({}: Props) {
     .replaceAll(/[-:]/g, "")
     .replace("T", "-")
 
+  const updateTimestamp = () => {
+    const updatingTimestamp = new Date(Date.now())
+      .toISOString()
+      .split(".")[0]
+      .replaceAll(/[-:]/g, "")
+      .replace("T", "-")
+    setRealtimeTimestamp(updatingTimestamp)
+  }
+
+  useEffect(() => {
+    updateTimestamp()
+    const interval = setInterval(updateTimestamp, 1000)
+    return () => clearInterval(interval)
+  }, [])
+
   const addAliasToEmail = (email: string, alias: string) => {
+    if (!email) return ""
     return email.split("@").join(`+${alias}@`)
   }
 
   useEffect(() => {
     //every time the selected alias changes, update the aliased email
-    setAliasedEmail(addAliasToEmail(email, selectedAlias || timestamp))
-    setAliasedEmailWithTimestamp(
+    setAliasedEmail(
       addAliasToEmail(
         email,
-        selectedAlias ? `${selectedAlias}-${timestamp}` : timestamp
+        selectedAlias
+          ? `${selectedAlias}-${realtimeTimestamp}`
+          : realtimeTimestamp
       )
     )
-  }, [email, selectedAlias])
+  }, [email, selectedAlias, realtimeTimestamp])
 
   const validateEmail = (email: string) => {
     const re = /\S+@\S+\.\S+/
@@ -71,7 +88,10 @@ export default function InputCreator({}: Props) {
   }
 
   const handleCreateAlias = (query: string) => {
-    setAliases([...aliases, { label: query, value: query }])
+    setAliases([
+      ...aliases,
+      { label: query, value: query.trim().replaceAll(/\W/g, "") },
+    ])
   }
   const [editingAliases, setEditingAliases] = useState(false)
 
@@ -192,7 +212,7 @@ export default function InputCreator({}: Props) {
             )}
           </Box>
         </Grid.Col>
-        <Grid.Col span={6}>
+        <Grid.Col span={12}>
           <CopyButton value={aliasedEmail}>
             {({ copied, copy }) => (
               <>
@@ -206,27 +226,6 @@ export default function InputCreator({}: Props) {
                   disabled={!validateEmail(email) || email.length === 0}
                 >
                   {copied ? `Copied ${aliasedEmail}` : `${aliasedEmail}`}
-                </Button>
-              </>
-            )}
-          </CopyButton>
-        </Grid.Col>
-        <Grid.Col span={6}>
-          <CopyButton value={aliasedEmailWithTimestamp}>
-            {({ copied, copy }) => (
-              <>
-                <Button
-                  size={"md"}
-                  h={100}
-                  fullWidth
-                  variant={copied ? "light" : "outline"}
-                  onClick={copy}
-                  rightIcon={<IconCopy />}
-                  disabled={!validateEmail(email) || email.length === 0}
-                >
-                  {copied
-                    ? `Copied ${aliasedEmailWithTimestamp}`
-                    : `${aliasedEmailWithTimestamp}`}
                 </Button>
               </>
             )}

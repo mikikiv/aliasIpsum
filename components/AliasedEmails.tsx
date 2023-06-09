@@ -38,6 +38,7 @@ export default function InputCreator({}: Props) {
   const [selectedAlias, setSelectedAlias] = useState("")
   const [aliasedEmail, setAliasedEmail] = useState("")
   const [realtimeTimestamp, setRealtimeTimestamp] = useState("")
+  const [copiedEmail, setCopiedEmail] = useState("")
 
   const timestamp = new Date(Date.now())
     .toISOString()
@@ -102,6 +103,10 @@ export default function InputCreator({}: Props) {
       setEditingAliases(false)
       setSelectedAlias("")
     }
+  }
+
+  const handleCopyEmail = () => {
+    setCopiedEmail(aliasedEmail)
   }
 
   return (
@@ -222,7 +227,7 @@ export default function InputCreator({}: Props) {
             )}
           </Box>
         </Grid.Col>
-        <Grid.Col span={12}>
+        <Grid.Col span={12} onClick={handleCopyEmail}>
           <CopyButton value={aliasedEmail}>
             {({ copied, copy }) => (
               <>
@@ -235,7 +240,7 @@ export default function InputCreator({}: Props) {
                   rightIcon={<IconCopy />}
                   disabled={!validateEmail(email) || email.length === 0}
                 >
-                  {copied ? `Copied ${aliasedEmail}` : `${aliasedEmail}`}
+                  {copied ? `Copied ${copiedEmail}` : `${aliasedEmail}`}
                 </Button>
               </>
             )}

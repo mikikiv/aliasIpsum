@@ -37,6 +37,13 @@ export default function InputCreator({}: Props) {
   })
   const [selectedAlias, setSelectedAlias] = useState("")
   const [aliasedEmail, setAliasedEmail] = useState("")
+  const [aliasedEmailWithTimestamp, setAliasedEmailWithTimestamp] = useState("")
+
+  const timestamp = new Date(Date.now())
+    .toISOString()
+    .split(".")[0]
+    .replaceAll(/[-:]/g, "")
+    .replace("T", "-")
 
   const addAliasToEmail = (email: string, alias: string) => {
     return email.split("@").join(`+${alias}@`)
@@ -44,8 +51,12 @@ export default function InputCreator({}: Props) {
 
   useEffect(() => {
     //every time the selected alias changes, update the aliased email
-    setAliasedEmail(
-      addAliasToEmail(email, selectedAlias || Date.now().toString())
+    setAliasedEmail(addAliasToEmail(email, selectedAlias || timestamp))
+    setAliasedEmailWithTimestamp(
+      addAliasToEmail(
+        email,
+        selectedAlias ? `${selectedAlias}-${timestamp}` : timestamp
+      )
     )
   }, [email, selectedAlias])
 
@@ -56,9 +67,7 @@ export default function InputCreator({}: Props) {
 
   const handleChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value)
-    setAliasedEmail(
-      addAliasToEmail(e.target.value, selectedAlias || Date.now().toString())
-    )
+    setAliasedEmail(addAliasToEmail(e.target.value, selectedAlias || timestamp))
   }
 
   const handleCreateAlias = (query: string) => {
@@ -183,7 +192,7 @@ export default function InputCreator({}: Props) {
             )}
           </Box>
         </Grid.Col>
-        <Grid.Col span={12}>
+        <Grid.Col span={6}>
           <CopyButton value={aliasedEmail}>
             {({ copied, copy }) => (
               <>
@@ -197,6 +206,27 @@ export default function InputCreator({}: Props) {
                   disabled={!validateEmail(email) || email.length === 0}
                 >
                   {copied ? `Copied ${aliasedEmail}` : `${aliasedEmail}`}
+                </Button>
+              </>
+            )}
+          </CopyButton>
+        </Grid.Col>
+        <Grid.Col span={6}>
+          <CopyButton value={aliasedEmailWithTimestamp}>
+            {({ copied, copy }) => (
+              <>
+                <Button
+                  size={"md"}
+                  h={100}
+                  fullWidth
+                  variant={copied ? "light" : "outline"}
+                  onClick={copy}
+                  rightIcon={<IconCopy />}
+                  disabled={!validateEmail(email) || email.length === 0}
+                >
+                  {copied
+                    ? `Copied ${aliasedEmailWithTimestamp}`
+                    : `${aliasedEmailWithTimestamp}`}
                 </Button>
               </>
             )}

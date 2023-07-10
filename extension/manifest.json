@@ -1,0 +1,11 @@
+{
+  "name": "quicklorem",
+  "version": "1.0.0",
+  "description": "capture placeholder text from the web",
+  "manifest_version": 3,
+  "author": "mikikiv",
+  "action": {
+    "default_popup": "extension/alias.html",
+    "default_title": "quicklorem"
+  }
+}

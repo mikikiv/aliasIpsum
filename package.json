@@ -22,6 +22,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:extension": "next build && next export && mv out/_next out/next && sed -i '' -e 's/\\/_next/\\.\\/next/g' out/**.html && mv out/index.html /extension && rsync -va --delete-after out/next/ /extension/next/ && rm -rf out && rsync -va --delete-after public/next-assets /extension/",
     "start": "next start",
     "lint": "next lint",
     "vercel-build": "next build"
@@ -37,6 +38,7 @@
     "@types/react": "18.0.38",
     "@types/react-dom": "18.0.11",
     "@vercel/analytics": "^1.0.1",
+    "analytics": "github:vercel/analytics",
     "eslint": "8.39.0",
     "eslint-config-next": "13.3.1",
     "next": "13.3.1",

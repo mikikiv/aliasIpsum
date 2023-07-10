@@ -19,6 +19,7 @@ import Link from "next/link"
 import { IconBrandGithub } from "@tabler/icons-react"
 import HomepageHero from "../components/HomepageHero"
 import Script from "next/script"
+import { useRouter } from "next/router"
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props
@@ -29,6 +30,12 @@ export default function App(props: AppProps) {
   })
   const toggleColorScheme = (value?: ColorScheme) =>
     setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"))
+
+  // if the route contains 'extension' then use the extension layout
+  // otherwise use the default layout
+  const router = useRouter()
+  const isExtension = router.pathname?.includes("extension")
+  const Layout = isExtension ? ExtentionLayout : DefaultLayout
 
   useHotkeys([["mod+J", () => toggleColorScheme()]])
   return (
@@ -65,7 +72,8 @@ export default function App(props: AppProps) {
             colorScheme,
           }}
         >
-          <Layout colorScheme={colorScheme} p={"xl"}>
+          {}
+          <Layout colorScheme={colorScheme}>
             <Component {...pageProps} />
             <Analytics />
           </Layout>
@@ -75,7 +83,24 @@ export default function App(props: AppProps) {
   )
 }
 
-function Layout({
+function ExtentionLayout({
+  colorScheme,
+  children,
+  ...rest
+}: {
+  colorScheme: string
+
+  children: React.ReactNode
+  [x: string]: any
+}) {
+  return (
+    <AppShell padding="0" w={"380px"} h={"auto"} {...rest}>
+      {children}
+    </AppShell>
+  )
+}
+
+function DefaultLayout({
   colorScheme,
   children,
   ...rest
@@ -147,3 +172,4 @@ function Layout({
     </AppShell>
   )
 }
+

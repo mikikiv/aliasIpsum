@@ -5,7 +5,7 @@
   "manifest_version": 3,
   "author": "mikikiv",
   "action": {
-    "default_popup": "extension/alias.html",
+    "default_popup": "index.html?extension=true",
     "default_title": "quicklorem"
   }
 }

@@ -1,14 +1,23 @@
 import Head from "next/head"
 import { Inter } from "next/font/google"
 import TextGeneration from "../components/TextGeneration"
-import { Card, Container, Select, SimpleGrid } from "@mantine/core"
+import { Container, SimpleGrid } from "@mantine/core"
 import { options } from "@/utils/options"
-import { useState } from "react"
 import AliasedEmails from "@/components/AliasedEmails"
-
-const inter = Inter({ subsets: ["latin"] })
+import { useRouter } from "next/router"
 
 export default function Home() {
+  const router = useRouter()
+  const isExtension = router.query.extension === "true"
+  const Page = !isExtension ? Homepage : Extension
+  return (
+    <>
+      <Page />
+    </>
+  )
+}
+
+const Homepage = () => {
   return (
     <>
       <Head>
@@ -16,14 +25,24 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main>
-        <Container>
-          <SimpleGrid>
-            <TextGeneration defaultOptions={options} />
-            <AliasedEmails />
-          </SimpleGrid>
-        </Container>
-      </main>
+      <Container>
+        <SimpleGrid>
+          <TextGeneration defaultOptions={options} />
+          <AliasedEmails />
+        </SimpleGrid>
+      </Container>
+    </>
+  )
+}
+
+const Extension = () => {
+  return (
+    <>
+      <Head>
+        <meta name="description" content="Get lorem faster" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <AliasedEmails extension />
     </>
   )
 }

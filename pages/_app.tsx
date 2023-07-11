@@ -3,13 +3,16 @@ import { Analytics } from "@vercel/analytics/react"
 import Head from "next/head"
 import {
   AppShell,
+  Box,
   Button,
+  Center,
   ColorScheme,
   ColorSchemeProvider,
   Footer,
   Group,
   Header,
   MantineProvider,
+  Text,
   Title,
 } from "@mantine/core"
 import { useHotkeys, useLocalStorage } from "@mantine/hooks"
@@ -19,6 +22,9 @@ import Link from "next/link"
 import { IconBrandGithub } from "@tabler/icons-react"
 import HomepageHero from "../components/HomepageHero"
 import Script from "next/script"
+import { useRouter } from "next/router"
+import { Loader } from "@mantine/core"
+import { useEffect, useState } from "react"
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props
@@ -30,7 +36,29 @@ export default function App(props: AppProps) {
   const toggleColorScheme = (value?: ColorScheme) =>
     setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"))
 
+  // if the route contains 'extension' then use the extension layout
+  // otherwise use the default layout
+  const router = useRouter()
+  const isExtension = !!router.query?.extension == true
+  const [isLoading, setIsLoading] = useState(true)
+
+  // use LoadingLayout while loading, then use ExtenstionLayout unless isExtension is false
+  const Layout = isLoading
+    ? LoadingLayout
+    : isExtension
+    ? ExtentionLayout
+    : DefaultLayout
+
   useHotkeys([["mod+J", () => toggleColorScheme()]])
+
+  // prevent DefaultLayout from loading before finished loading
+  // wait an extra half second before loading the expected layout to prevent flickering
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoading(false)
+    }, 300)
+  }, [])
+
   return (
     <>
       <Head>
@@ -40,20 +68,6 @@ export default function App(props: AppProps) {
           content="minimum-scale=1, initial-scale=1, width=device-width"
         />
       </Head>
-      <Script
-        id={"google-analytics"}
-        src={`https://www.googletagmanager.com/gtag/js?id=G-MN76PBXXQQ`}
-        strategy={"afterInteractive"}
-      />
-      <Script id={"google-analytics-init"}>
-        {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                
-                gtag('config', 'G-MN76PBXXQQ');
-                `}
-      </Script>
       <ColorSchemeProvider
         colorScheme={colorScheme}
         toggleColorScheme={toggleColorScheme}
@@ -63,9 +77,10 @@ export default function App(props: AppProps) {
           withNormalizeCSS
           theme={{
             colorScheme,
+            loader: "bars",
           }}
         >
-          <Layout colorScheme={colorScheme} p={"xl"}>
+          <Layout colorScheme={colorScheme}>
             <Component {...pageProps} />
             <Analytics />
           </Layout>
@@ -75,7 +90,24 @@ export default function App(props: AppProps) {
   )
 }
 
-function Layout({
+function ExtentionLayout({
+  colorScheme,
+  children,
+  ...rest
+}: {
+  colorScheme: string
+
+  children: React.ReactNode
+  [x: string]: any
+}) {
+  return (
+    <AppShell w={"380px"} {...rest}>
+      {children}
+    </AppShell>
+  )
+}
+
+function DefaultLayout({
   colorScheme,
   children,
   ...rest
@@ -145,5 +177,13 @@ function Layout({
     >
       {children}
     </AppShell>
+  )
+}
+
+function LoadingLayout() {
+  return (
+    <Center miw={"380px"} h={"300px"}>
+      <Loader size={120} />
+    </Center>
   )
 }

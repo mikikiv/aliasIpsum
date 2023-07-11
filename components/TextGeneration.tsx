@@ -13,6 +13,7 @@ import React, { useState } from "react"
 import { PlaceText } from "../utils/transformer"
 
 interface Props {
+  extension?: boolean,
   defaultOptions: {
     label: string
     textElement: string

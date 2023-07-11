@@ -23,13 +23,13 @@ import {
 } from "@tabler/icons-react"
 import { useEffect, useState } from "react"
 
-type Props = {}
+type Props = { extension?: boolean }
 type Alias = {
   label: string
   value: string
 }
 
-export default function InputCreator({}: Props) {
+export default function InputCreator({ extension }: Props) {
   const [email, setEmail] = useLocalStorage({ key: "email", defaultValue: "" })
   const [aliases, setAliases] = useLocalStorage({
     key: "aliases",
@@ -89,6 +89,9 @@ export default function InputCreator({}: Props) {
   }
 
   const handleCreateAlias = (query: string) => {
+    query = query.trim().replaceAll(/\W/g, "")
+    if (aliases.find((a) => a.value === query)) return
+    if (query.length === 0) return
     setAliases([
       ...aliases,
       { label: query, value: query.trim().replaceAll(/\W/g, "") },
@@ -110,15 +113,23 @@ export default function InputCreator({}: Props) {
   }
 
   return (
-    <Card shadow="sm" padding="md" radius="md">
-      <Grid>
+    <Card
+      shadow="sm"
+      padding={extension ? "xs" : "md"}
+      radius="md"
+      maw={extension ? "380px" : "100%"}
+    >
+      <Grid gutter={extension ? 0 : "md"}>
         <Grid.Col span={12}>
           <Text> Aliased Emails</Text>
         </Grid.Col>
-        <Grid.Col span={8}>
+        <Grid.Col span={extension ? 12 : 8}>
           <Input.Wrapper
             description={
               "Aliased emails are a way to create additional email addresses that forward incoming messages to your primary email account. "
+            }
+            descriptionProps={
+              extension ? { display: "none" } : { display: "block" }
             }
           >
             <Input
@@ -144,7 +155,8 @@ export default function InputCreator({}: Props) {
             />
           </Input.Wrapper>
         </Grid.Col>
-        <Grid.Col span={4}>
+
+        <Grid.Col span={extension ? 12 : 4}>
           <Box p={rem(10)}>
             Customize Aliases
             {aliases.length > 0 ? (
@@ -227,12 +239,13 @@ export default function InputCreator({}: Props) {
             )}
           </Box>
         </Grid.Col>
+
         <Grid.Col span={12} onClick={handleCopyEmail}>
           <CopyButton value={aliasedEmail}>
             {({ copied, copy }) => (
               <>
                 <Button
-                  size={"md"}
+                  size={extension ? "xs" : "md"}
                   h={100}
                   fullWidth
                   variant={copied ? "light" : "outline"}

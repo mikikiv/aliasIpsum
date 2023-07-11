@@ -3,7 +3,6 @@ import { Analytics } from "@vercel/analytics/react"
 import Head from "next/head"
 import {
   AppShell,
-  Box,
   Button,
   Center,
   ColorScheme,
@@ -12,7 +11,6 @@ import {
   Group,
   Header,
   MantineProvider,
-  Text,
   Title,
 } from "@mantine/core"
 import { useHotkeys, useLocalStorage } from "@mantine/hooks"
@@ -21,7 +19,6 @@ import ColorSwitcher from "../components/ColorSwitcher"
 import Link from "next/link"
 import { IconBrandGithub } from "@tabler/icons-react"
 import HomepageHero from "../components/HomepageHero"
-import Script from "next/script"
 import { useRouter } from "next/router"
 import { Loader } from "@mantine/core"
 import { useEffect, useState } from "react"

@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "AliasIpsum",
+  "version": "1.0.0",
+  "action": {
+    "default_popup": "index.html?extension=true",
+    "default_title": "AliasIpsum",
+    "default_icon": "logo.png"
+  },
+  "description": "Quickly copy aliased emails to the clipboard",
+  "author": "mikikiv",
+  "icons": {
+    "16": "logo.png",
+    "48": "logo.png",
+    "128": "logo.png"
+  },
+  "homepage_url": "https://quicklorem.dev",
+  "permissions": [
+    "clipboardWrite",
+    "storage"
+  ]
+}

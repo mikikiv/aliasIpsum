@@ -18,6 +18,7 @@ find out -type f -name "*.html" -exec sed -i '' -e 's#/_next#./next#g' {} +
 # Move index.html to /extension folder
 mkdir extension
 mv out/index.html extension/index.html
+mv out/logo.png extension/logo.png
 
 # Synchronize out/next with /extension/next
 rsync -va --delete-after out/next/ extension/next/

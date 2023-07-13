@@ -24,7 +24,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "vercel-build": "next build"
+    "vercel-build": "next build",
+    "build:extension": "extensionReqs/build.sh"
   },
   "dependencies": {
     "@emotion/react": "^11.10.6",

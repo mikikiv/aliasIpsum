@@ -16,7 +16,6 @@
   },
   "homepage_url": "https://quicklorem.dev",
   "permissions": [
-    "clipboardWrite",
-    "storage"
+    "clipboardWrite"
   ]
 }

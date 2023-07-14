@@ -35,7 +35,10 @@ export default function InputCreator({ extension }: Props) {
     key: "aliases",
     defaultValue: [] as Alias[],
   })
-  const [selectedAlias, setSelectedAlias] = useState("")
+  const [selectedAlias, setSelectedAlias] = useLocalStorage({
+    key: "selectedAlias",
+    defaultValue: "",
+  })
   const [aliasedEmail, setAliasedEmail] = useState("")
   const [realtimeTimestamp, setRealtimeTimestamp] = useState("")
   const [copiedEmail, setCopiedEmail] = useState("")
@@ -212,6 +215,7 @@ export default function InputCreator({ extension }: Props) {
                 clearable
                 allowDeselect
                 placeholder="Timestamp"
+                value={selectedAlias}
                 data={aliases}
                 searchable
                 creatable

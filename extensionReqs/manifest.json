@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "AliasIpsum",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "action": {
     "default_popup": "/extension.html",
     "default_title": "AliasIpsum",
@@ -15,7 +15,5 @@
     "128": "logo.png"
   },
   "homepage_url": "https://quicklorem.dev",
-  "permissions": [
-    "clipboardWrite"
-  ]
+  "permissions": ["clipboardWrite"]
 }

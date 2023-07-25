@@ -36,25 +36,11 @@ export default function App(props: AppProps) {
   // if the route contains 'extension' then use the extension layout
   // otherwise use the default layout
   const router = useRouter()
-  const isExtension = !!router.query?.extension == true
-  const [isLoading, setIsLoading] = useState(true)
+  const isExtension = router.pathname.includes("/extension")
 
-  // use LoadingLayout while loading, then use ExtenstionLayout unless isExtension is false
-  const Layout = isLoading
-    ? LoadingLayout
-    : isExtension
-    ? ExtentionLayout
-    : DefaultLayout
+  const Layout = isExtension ? ExtentionLayout : DefaultLayout
 
   useHotkeys([["mod+J", () => toggleColorScheme()]])
-
-  // prevent DefaultLayout from loading before finished loading
-  // wait an extra half second before loading the expected layout to prevent flickering
-  useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false)
-    }, 300)
-  }, [])
 
   return (
     <>
@@ -177,10 +163,3 @@ function DefaultLayout({
   )
 }
 
-function LoadingLayout() {
-  return (
-    <Center miw={"380px"} h={"300px"}>
-      <Loader size={120} />
-    </Center>
-  )
-}

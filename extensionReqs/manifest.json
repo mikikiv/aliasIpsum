@@ -3,7 +3,7 @@
   "name": "AliasIpsum",
   "version": "1.0.0",
   "action": {
-    "default_popup": "index.html?extension=true",
+    "default_popup": "/extension.html",
     "default_title": "AliasIpsum",
     "default_icon": "logo.png"
   },

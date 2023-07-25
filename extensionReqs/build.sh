@@ -15,9 +15,9 @@ mv out/_next out/next
 # Replace occurrences of /_next with ./next in HTML files
 find out -type f -name "*.html" -exec sed -i '' -e 's#/_next#./next#g' {} +
 
-# Move index.html to /extension folder
+# Move extension.html to /extension folder
 mkdir extension
-mv out/index.html extension/index.html
+mv out/extension.html extension/extension.html
 mv out/logo.png extension/logo.png
 
 # Synchronize out/next with /extension/next

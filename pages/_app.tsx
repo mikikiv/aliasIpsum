@@ -22,6 +22,7 @@ import HomepageHero from "../components/HomepageHero"
 import { useRouter } from "next/router"
 import { Loader } from "@mantine/core"
 import { useEffect, useState } from "react"
+import { Provider as JotaiProvider } from "jotai"
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props
@@ -63,10 +64,12 @@ export default function App(props: AppProps) {
             loader: "bars",
           }}
         >
-          <Layout colorScheme={colorScheme}>
-            <Component {...pageProps} />
-            <Analytics />
-          </Layout>
+          <JotaiProvider>
+            <Layout colorScheme={colorScheme}>
+              <Component {...pageProps} />
+              <Analytics />
+            </Layout>
+          </JotaiProvider>
         </MantineProvider>
       </ColorSchemeProvider>
     </>

@@ -22,12 +22,21 @@ import {
   IconX,
 } from "@tabler/icons-react"
 import { useEffect, useState } from "react"
+import { atom, useAtom, useAtomValue, useSetAtom } from "jotai"
+import { atomWithStorage } from "jotai/utils"
 
 type Props = { extension?: boolean }
 type Alias = {
   label: string
   value: string
 }
+type CopyHistory = {
+  id: number
+  type: "email" | "text"
+  value: string
+}
+
+const localCopyHistoryAtom = atomWithStorage("copyHistory", [] as CopyHistory[])
 
 export default function InputCreator({ extension }: Props) {
   const [email, setEmail] = useLocalStorage({ key: "email", defaultValue: "" })
@@ -111,8 +120,14 @@ export default function InputCreator({ extension }: Props) {
     }
   }
 
+  const setHistory = useSetAtom(localCopyHistoryAtom)
+
   const handleCopyEmail = () => {
     setCopiedEmail(aliasedEmail)
+    setHistory((history) => [
+      ...history,
+      { id: history.length, type: "email", value: aliasedEmail },
+    ])
   }
 
   return (

@@ -1,12 +1,14 @@
 import {
+  Badge,
   Button,
   Group,
-  HoverCard,
   MantineColor,
+  Popover,
   Stack,
   Text,
 } from "@mantine/core"
-import React from "react"
+import { useHover } from "@mantine/hooks"
+import React, { useState } from "react"
 
 type Props = {
   title?: string
@@ -14,8 +16,6 @@ type Props = {
   confirmLabel?: string
   cancelLabel?: string
   onConfirm: () => void
-  onCancel?: () => void
-  children: React.ReactNode
   confirmColor?: MantineColor
   cancelColor?: MantineColor
   [x: string]: any
@@ -32,25 +32,59 @@ export default function ConfirmationPopup({
   children,
   ...rest
 }: Props) {
+  const [opened, setOpened] = useState(false)
+
+  const handleCancel = () => {
+    onCancel()
+    setOpened(false)
+  }
+
+  const handleConfirm = () => {
+    onConfirm()
+    setOpened(false)
+  }
+
+  const { hovered, ref } = useHover()
+
   return (
     <Group {...rest}>
-      <HoverCard closeDelay={400}>
-        <HoverCard.Target>{children}</HoverCard.Target>
-        <HoverCard.Dropdown>
+      <Popover opened={opened} width={"target"}>
+        <Popover.Target>
+          <Badge
+            ref={ref}
+            sx={{ cursor: "pointer" }}
+            color={hovered || opened ? "red" : "gray"}
+            w={"100%"}
+            onClick={() => {
+              setOpened(true)
+            }}
+          >
+            Clear History
+          </Badge>
+        </Popover.Target>
+        <Popover.Dropdown>
           <Stack>
             {title && <Text>{title}</Text>}
             {description && <Text color="dimmed">{description}</Text>}
             <Button.Group>
-              <Button color={confirmColor || "green"} onClick={onConfirm}>
+              <Button
+                w={"100%"}
+                color={confirmColor || "green"}
+                onClick={handleConfirm}
+              >
                 {confirmLabel || "ok"}
               </Button>
-              <Button color={cancelColor || "grey"} onClick={onCancel}>
+              <Button
+                w={"100%"}
+                color={cancelColor || "grey"}
+                onClick={() => handleCancel()}
+              >
                 {cancelLabel || "cancel"}
               </Button>
             </Button.Group>
           </Stack>
-        </HoverCard.Dropdown>
-      </HoverCard>
+        </Popover.Dropdown>
+      </Popover>
     </Group>
   )
 }

@@ -4,7 +4,6 @@ import Head from "next/head"
 import {
   AppShell,
   Aside,
-  Badge,
   Button,
   ColorScheme,
   ColorSchemeProvider,
@@ -81,6 +80,25 @@ export default function App(props: AppProps) {
   )
 }
 
+const ClearHistoryButton = () => {
+  const setHistory = useSetAtom(localCopyHistoryAtom)
+  const handleDeleteHistory = () => {
+    setHistory(RESET)
+  }
+
+  return (
+    <ConfirmationPopup
+      description="Are you sure you want to clear your copy history?"
+      confirmLabel="Delete"
+      cancelLabel="Cancel"
+      onConfirm={() => handleDeleteHistory()}
+      confirmColor="red"
+      cancelColor="gray"
+      position="center"
+    />
+  )
+}
+
 function ExtentionLayout({
   colorScheme,
   children,
@@ -91,8 +109,22 @@ function ExtentionLayout({
   children: React.ReactNode
   [x: string]: any
 }) {
+  const extensionWidth = "380px"
+  const extensionHeight = "400px"
   return (
-    <AppShell w={"380px"} {...rest}>
+    <AppShell
+      w={extensionWidth}
+      h={extensionHeight}
+      {...rest}
+      footer={
+        <Footer w={extensionWidth} height={"100px"}>
+          <ScrollArea h={76} type="always">
+            <CopyHistory type="email" spacing={1} />
+          </ScrollArea>
+          <ClearHistoryButton />
+        </Footer>
+      }
+    >
       {children}
     </AppShell>
   )
@@ -107,11 +139,6 @@ function DefaultLayout({
   children: React.ReactNode
   [x: string]: any
 }) {
-  const setHistory = useSetAtom(localCopyHistoryAtom)
-  const handleDeleteHistory = () => {
-    setHistory(RESET)
-  }
-
   return (
     <AppShell
       padding="md"
@@ -148,17 +175,7 @@ function DefaultLayout({
         <MediaQuery smallerThan="sm" styles={{ display: "none" }}>
           <Aside p="sm" hiddenBreakpoint="sm" width={{ sm: 200, lg: 300 }}>
             <Aside.Section pb={16}>
-              <ConfirmationPopup
-                description="Are you sure you want to clear your copy history?"
-                confirmLabel="Delete"
-                cancelLabel="Cancel"
-                onConfirm={() => handleDeleteHistory()}
-                confirmColor="red"
-                cancelColor="gray"
-                position="center"
-              >
-                <Badge w={"100%"}>Clear History</Badge>
-              </ConfirmationPopup>
+              <ClearHistoryButton />
             </Aside.Section>
             <Aside.Section grow component={ScrollArea}>
               <CopyHistory />

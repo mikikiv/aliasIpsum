@@ -3,14 +3,15 @@ import { Analytics } from "@vercel/analytics/react"
 import Head from "next/head"
 import {
   AppShell,
+  Aside,
   Button,
-  Center,
   ColorScheme,
   ColorSchemeProvider,
   Footer,
   Group,
   Header,
   MantineProvider,
+  MediaQuery,
   Title,
 } from "@mantine/core"
 import { useHotkeys, useLocalStorage } from "@mantine/hooks"
@@ -23,6 +24,7 @@ import { useRouter } from "next/router"
 import { Loader } from "@mantine/core"
 import { useEffect, useState } from "react"
 import { Provider as JotaiProvider } from "jotai"
+import CopyHistory from "@/components/CopyHistory"
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props
@@ -133,6 +135,13 @@ function DefaultLayout({
             <ColorSwitcher />
           </Group>
         </Header>
+      }
+      aside={
+        <MediaQuery smallerThan="sm" styles={{ display: "none" }}>
+          <Aside p="md" hiddenBreakpoint="sm" width={{ sm: 200, lg: 300 }}>
+            <CopyHistory />
+          </Aside>
+        </MediaQuery>
       }
       footer={
         <Footer height={100} fixed={false}>

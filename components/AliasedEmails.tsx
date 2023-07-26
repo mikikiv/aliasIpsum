@@ -30,7 +30,7 @@ type Alias = {
   label: string
   value: string
 }
-type CopyHistory = {
+export type CopyHistory = {
   id: number
   type: "email" | "text"
   value: string
@@ -120,11 +120,11 @@ export default function InputCreator({ extension }: Props) {
     }
   }
 
-  const setHistory = useSetAtom(localCopyHistoryAtom)
+  const [copyHistory, setCopyHistory] = useAtom(localCopyHistoryAtom)
 
   const handleCopyEmail = () => {
     setCopiedEmail(aliasedEmail)
-    setHistory((history) => [
+    setCopyHistory((history) => [
       ...history,
       { id: history.length, type: "email", value: aliasedEmail },
     ])

@@ -36,7 +36,10 @@ export type CopyHistory = {
   value: string
 }
 
-const localCopyHistoryAtom = atomWithStorage("copyHistory", [] as CopyHistory[])
+export const localCopyHistoryAtom = atomWithStorage(
+  "copyHistory",
+  [] as CopyHistory[]
+)
 
 export default function InputCreator({ extension }: Props) {
   const [email, setEmail] = useLocalStorage({ key: "email", defaultValue: "" })
@@ -124,6 +127,8 @@ export default function InputCreator({ extension }: Props) {
 
   const handleCopyEmail = () => {
     setCopiedEmail(aliasedEmail)
+
+    if (copyHistory.find((item) => item.value === aliasedEmail)) return
     setCopyHistory((history) => [
       ...history,
       { id: history.length, type: "email", value: aliasedEmail },

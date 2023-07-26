@@ -4,6 +4,7 @@ import Head from "next/head"
 import {
   AppShell,
   Aside,
+  Badge,
   Button,
   ColorScheme,
   ColorSchemeProvider,
@@ -12,6 +13,7 @@ import {
   Header,
   MantineProvider,
   MediaQuery,
+  ScrollArea,
   Title,
 } from "@mantine/core"
 import { useHotkeys, useLocalStorage } from "@mantine/hooks"
@@ -21,10 +23,11 @@ import Link from "next/link"
 import { IconBrandGithub } from "@tabler/icons-react"
 import HomepageHero from "../components/HomepageHero"
 import { useRouter } from "next/router"
-import { Loader } from "@mantine/core"
-import { useEffect, useState } from "react"
-import { Provider as JotaiProvider } from "jotai"
+import { Provider as JotaiProvider, useSetAtom } from "jotai"
 import CopyHistory from "@/components/CopyHistory"
+import ConfirmationPopup from "@/components/ConfirmationPopup"
+import { localCopyHistoryAtom } from "@/components/AliasedEmails"
+import { RESET } from "jotai/utils"
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props
@@ -104,6 +107,11 @@ function DefaultLayout({
   children: React.ReactNode
   [x: string]: any
 }) {
+  const setHistory = useSetAtom(localCopyHistoryAtom)
+  const handleDeleteHistory = () => {
+    setHistory(RESET)
+  }
+
   return (
     <AppShell
       padding="md"
@@ -138,8 +146,23 @@ function DefaultLayout({
       }
       aside={
         <MediaQuery smallerThan="sm" styles={{ display: "none" }}>
-          <Aside p="md" hiddenBreakpoint="sm" width={{ sm: 200, lg: 300 }}>
-            <CopyHistory />
+          <Aside p="sm" hiddenBreakpoint="sm" width={{ sm: 200, lg: 300 }}>
+            <Aside.Section pb={16}>
+              <ConfirmationPopup
+                description="Are you sure you want to clear your copy history?"
+                confirmLabel="Delete"
+                cancelLabel="Cancel"
+                onConfirm={() => handleDeleteHistory()}
+                confirmColor="red"
+                cancelColor="gray"
+                position="center"
+              >
+                <Badge w={"100%"}>Clear History</Badge>
+              </ConfirmationPopup>
+            </Aside.Section>
+            <Aside.Section grow component={ScrollArea}>
+              <CopyHistory />
+            </Aside.Section>
           </Aside>
         </MediaQuery>
       }

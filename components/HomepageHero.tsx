@@ -13,9 +13,9 @@ export default function HomepageHero({ ...rest }) {
             gradient={{ from: "blue", to: "cyan", deg: 45 }}
             inherit
           >
-            Lorem Ipsum
+            Placeholder Text
           </Text>{" "}
-          faster
+          Faster
         </Title>
         <Text color="dimmed">
           Copy the content you need to your clipboard with one click

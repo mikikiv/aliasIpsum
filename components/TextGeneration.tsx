@@ -72,6 +72,7 @@ export default function CopyGroupCard({ defaultOptions }: Props) {
             defaultValue={theme}
             onChange={(value) => setTheme(value as string)}
             pb={16}
+            withinPortal
           />
         </Grid.Col>
       </Grid>

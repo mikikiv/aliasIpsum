@@ -14,8 +14,8 @@ export default function Home() {
       </Head>
       <Container>
         <SimpleGrid>
-          <TextGeneration defaultOptions={options} />
           <AliasedEmails />
+          <TextGeneration defaultOptions={options} />
         </SimpleGrid>
       </Container>
     </>

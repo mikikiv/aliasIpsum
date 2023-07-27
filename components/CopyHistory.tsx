@@ -107,8 +107,8 @@ export default function CopyHistory({ type, spacing, tooltip, scrollThreshold }:
                 >
                   <Button
                     leftIcon={<IconCopy />}
-                    color="violet"
-                    variant={copied ? "white" : "default"}
+                    color={"cyan"}
+                    variant={copied ? "light" : "default"}
                     onClick={copy}
                     key={item.id}
                   >

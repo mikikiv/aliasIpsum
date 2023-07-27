@@ -112,15 +112,21 @@ function ExtentionLayout({
 }) {
   const extensionWidth = "380px"
   const extensionHeight = "400px"
+
   return (
     <AppShell
       w={extensionWidth}
       h={extensionHeight}
       {...rest}
       footer={
-        <Footer w={extensionWidth} height={"100px"}>
+        <Footer
+          w={extensionWidth}
+          height={"100px"}
+          px={"xs"}
+          withBorder={false}
+        >
           <ScrollArea h={76} type="always">
-            <CopyHistory type="email" spacing={1} />
+            <CopyHistory type="email" spacing={1} tooltip={false} />
           </ScrollArea>
           <ClearHistoryButton />
         </Footer>
@@ -179,7 +185,7 @@ function DefaultLayout({
               <ClearHistoryButton />
             </Aside.Section>
             <Aside.Section grow component={ScrollArea}>
-              <CopyHistory />
+              <CopyHistory threshold={29} />
             </Aside.Section>
           </Aside>
         </MediaQuery>

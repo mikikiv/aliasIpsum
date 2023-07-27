@@ -22,7 +22,7 @@ import {
   IconX,
 } from "@tabler/icons-react"
 import { useEffect, useState } from "react"
-import { atom, useAtom, useAtomValue, useSetAtom } from "jotai"
+import { useAtom } from "jotai"
 import { atomWithStorage } from "jotai/utils"
 
 type Props = { extension?: boolean }
@@ -234,6 +234,7 @@ export default function InputCreator({ extension }: Props) {
               <Select
                 clearable
                 allowDeselect
+                withinPortal
                 placeholder="Timestamp"
                 value={selectedAlias}
                 data={aliases}

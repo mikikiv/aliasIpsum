@@ -16,6 +16,7 @@ type Props = {
   confirmLabel?: string
   cancelLabel?: string
   onConfirm: () => void
+  onCancel?: () => void
   confirmColor?: MantineColor
   cancelColor?: MantineColor
   [x: string]: any
@@ -35,7 +36,9 @@ export default function ConfirmationPopup({
   const [opened, setOpened] = useState(false)
 
   const handleCancel = () => {
-    onCancel()
+    {
+      onCancel && onCancel()
+    }
     setOpened(false)
   }
 

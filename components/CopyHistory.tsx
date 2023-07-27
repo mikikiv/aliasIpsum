@@ -14,15 +14,10 @@ type Props = {
   type?: "email" | "text"
   spacing?: MantineNumberSize
   tooltip?: boolean
-  threshold?: number
+  scrollThreshold: number
 }
 
-export default function CopyHistory({
-  type,
-  spacing,
-  tooltip,
-  threshold,
-}: Props) {
+export default function CopyHistory({ type, spacing, tooltip, scrollThreshold }: Props) {
   let copyHistory = useAtomValue(localCopyHistoryAtom)
 
   type == "email" &&
@@ -33,18 +28,20 @@ export default function CopyHistory({
 
   const ScrollingText = ({
     children,
-    threshold,
+    scrollThreshold,
+    scrolling,
     ...rest
   }: {
     children: String
-    threshold?: number
+    scrollThreshold: number
+    scrolling: boolean
   }) => {
     const [hovered, setHovered] = useState(false)
 
-    const scalingFactor = 0.9
-    threshold == undefined && (threshold = 39)
-    const scrollSpeed = (threshold: number) => {
-      const speed = threshold * 0.02
+    const scalingFactor = 1.01
+
+    const scrollSpeed = (scrollThreshold: number) => {
+      const speed = scrollThreshold * 0.02
       if (speed > 0.8) {
         return 0.8
       } else {
@@ -52,11 +49,11 @@ export default function CopyHistory({
       }
     }
 
-    const scrollAmount = (threshold: number) => {
-      if (children.length <= threshold) {
+    const scrollAmount = (scrollThreshold: number) => {
+      if (children.length <= scrollThreshold) {
         return 0
       } else {
-        return (threshold - children.length) * scalingFactor + "ch"
+        return (scrollThreshold - children.length) * scalingFactor + "ch"
       }
     }
 
@@ -67,12 +64,21 @@ export default function CopyHistory({
         {...rest}
       >
         <div
-          style={{
-            transform: hovered
-              ? `translateX(${scrollAmount(threshold)})`
-              : "translateX(0)",
-            transition: `transform ${scrollSpeed(threshold)}s ease-out`,
-          }}
+          style={
+            scrolling
+              ? {
+                  transform: hovered
+                    ? `translateX(${scrollAmount(scrollThreshold)})`
+                    : "translateX(0)",
+                  transition: `transform ${scrollSpeed(
+                    scrollThreshold
+                  )}s ease-out`,
+                }
+              : {
+                  transform: `translateX(${scrollAmount(scrollThreshold)})`,
+                  transition: `transform 0.1s ease-out`,
+                }
+          }
         >
           {children}
         </div>
@@ -101,15 +107,17 @@ export default function CopyHistory({
                 >
                   <Button
                     leftIcon={<IconCopy />}
-                    compact
                     color="violet"
-                    variant={copied ? "white" : "outline"}
+                    variant={copied ? "white" : "default"}
                     onClick={copy}
                     key={item.id}
                   >
-                    <ScrollingText threshold={threshold}>
+                    <ScrollingText
+                      scrollThreshold={scrollThreshold}
+                      scrolling={copied ? false : true}
+                    >
                       {copied
-                        ? `Copied ${item.value}`
+                        ? `${item.value} copied!`
                         : `${item.id}: ${item.value}`}
                     </ScrollingText>
                   </Button>

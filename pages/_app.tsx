@@ -125,8 +125,13 @@ function ExtentionLayout({
           px={"xs"}
           withBorder={false}
         >
-          <ScrollArea h={76} type="always">
-            <CopyHistory type="email" spacing={1} tooltip={false} />
+          <ScrollArea h={76} type="auto" offsetScrollbars>
+            <CopyHistory
+              type="email"
+              spacing={1}
+              tooltip={false}
+              scrollThreshold={38}
+            />
           </ScrollArea>
           <ClearHistoryButton />
         </Footer>
@@ -185,7 +190,7 @@ function DefaultLayout({
               <ClearHistoryButton />
             </Aside.Section>
             <Aside.Section grow component={ScrollArea}>
-              <CopyHistory threshold={29} />
+              <CopyHistory scrollThreshold={29} />
             </Aside.Section>
           </Aside>
         </MediaQuery>

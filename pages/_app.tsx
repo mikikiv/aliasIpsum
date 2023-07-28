@@ -25,8 +25,7 @@ import { useRouter } from "next/router"
 import { Provider as JotaiProvider, useAtom } from "jotai"
 import CopyHistory from "@/components/CopyHistory"
 import ConfirmationPopup from "@/components/ConfirmationPopup"
-import { localCopyHistoryAtom } from "@/components/AliasedEmails"
-import { RESET } from "jotai/utils"
+import { RESET, atomWithStorage } from "jotai/utils"
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props
@@ -79,6 +78,17 @@ export default function App(props: AppProps) {
     </>
   )
 }
+
+export type CopyHistory = {
+  id: number
+  type: string
+  value: string
+}
+
+export const localCopyHistoryAtom = atomWithStorage(
+  "copyHistory",
+  [] as CopyHistory[]
+)
 
 const ClearHistoryButton = () => {
   const [history, setHistory] = useAtom(localCopyHistoryAtom)

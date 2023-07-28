@@ -23,23 +23,14 @@ import {
 } from "@tabler/icons-react"
 import { useEffect, useState } from "react"
 import { useAtom } from "jotai"
-import { atomWithStorage } from "jotai/utils"
+import { localCopyHistoryAtom } from "@/pages/_app"
+import { colorSelector } from "@/utils/colorSelector"
 
 type Props = { extension?: boolean }
 type Alias = {
   label: string
   value: string
 }
-export type CopyHistory = {
-  id: number
-  type: "email" | "text"
-  value: string
-}
-
-export const localCopyHistoryAtom = atomWithStorage(
-  "copyHistory",
-  [] as CopyHistory[]
-)
 
 export default function InputCreator({ extension }: Props) {
   const [email, setEmail] = useLocalStorage({ key: "email", defaultValue: "" })
@@ -277,6 +268,7 @@ export default function InputCreator({ extension }: Props) {
                   onClick={copy}
                   rightIcon={<IconCopy />}
                   disabled={!validateEmail(email) || email.length === 0}
+                  color={colorSelector("email")}
                 >
                   {copied ? `Copied ${copiedEmail}` : `${aliasedEmail}`}
                 </Button>

@@ -2,13 +2,16 @@ import React, { useState } from "react"
 import { useAtomValue } from "jotai"
 import {
   Button,
+  Card,
   CopyButton,
   MantineNumberSize,
   SimpleGrid,
   Tooltip,
 } from "@mantine/core"
-import { CopyHistory, localCopyHistoryAtom } from "./AliasedEmails"
+import { CopyHistory, localCopyHistoryAtom } from "@/pages/_app"
 import { IconCopy } from "@tabler/icons-react"
+import { colorSelector } from "@/utils/colorSelector"
+import { useRouter } from "next/router"
 
 type Props = {
   type?: "email" | "text"
@@ -17,7 +20,12 @@ type Props = {
   scrollThreshold: number
 }
 
-export default function CopyHistory({ type, spacing, tooltip, scrollThreshold }: Props) {
+export default function CopyHistory({
+  type,
+  spacing,
+  tooltip,
+  scrollThreshold,
+}: Props) {
   let copyHistory = useAtomValue(localCopyHistoryAtom)
 
   type == "email" &&
@@ -38,7 +46,7 @@ export default function CopyHistory({ type, spacing, tooltip, scrollThreshold }:
   }) => {
     const [hovered, setHovered] = useState(false)
 
-    const scalingFactor = 1.01
+    const scalingFactor = 1
 
     const scrollSpeed = (scrollThreshold: number) => {
       const speed = scrollThreshold * 0.02
@@ -101,14 +109,14 @@ export default function CopyHistory({ type, spacing, tooltip, scrollThreshold }:
                       ? { hover: true, focus: true, touch: true }
                       : { hover: false, focus: false, touch: false }
                   }
-                  openDelay={1000}
+                  openDelay={800}
                   withinPortal
                   position={"bottom"}
                 >
                   <Button
                     leftIcon={<IconCopy />}
-                    color={"cyan"}
-                    variant={copied ? "light" : "default"}
+                    color={colorSelector(item.type)}
+                    variant={copied ? "filled" : "outline"}
                     onClick={copy}
                     key={item.id}
                   >
@@ -117,7 +125,12 @@ export default function CopyHistory({ type, spacing, tooltip, scrollThreshold }:
                       scrolling={copied ? false : true}
                     >
                       {copied
-                        ? `${item.value} copied!`
+                        ? `${
+                            item.type === "email"
+                              ? item.value
+                              : item.type.charAt(0).toUpperCase() +
+                                item.type.slice(1)
+                          }  Copied!`
                         : `${item.id}: ${item.value}`}
                     </ScrollingText>
                   </Button>

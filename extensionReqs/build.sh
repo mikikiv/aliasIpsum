@@ -2,11 +2,15 @@
 
 # Build the Next.js application
 npx next build
-echo "\n Build complete \n "
+echo "
+Build complete
+"
 
 # Export the application as static HTML files
 npx next export
-echo "\n Export complete \n "
+echo "
+Export complete
+"
 
 # Move the _next directory to next
 
@@ -28,3 +32,11 @@ cp extensionReqs/manifest.json extension/manifest.json
 
 # Remove the out directory
 rm -rf out
+
+# when the user includes an export flag, export the extension folder as a zip
+if [ "$1" == "export" ]; then
+  echo "
+  exporting extension folder as zip
+  "
+  zip -r extension.zip extension
+fi

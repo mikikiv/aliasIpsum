@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   Card,
+  Container,
   CopyButton,
   Grid,
   Select,
@@ -11,9 +12,12 @@ import {
 } from "@mantine/core"
 import React, { useState } from "react"
 import { PlaceText } from "../utils/transformer"
+import { useAtom } from "jotai"
+import { localCopyHistoryAtom } from "@/pages/_app"
+import { colorSelector } from "@/utils/colorSelector"
 
 interface Props {
-  extension?: boolean,
+  extension?: boolean
   defaultOptions: {
     label: string
     textElement: string
@@ -72,6 +76,7 @@ export default function CopyGroupCard({ defaultOptions }: Props) {
             defaultValue={theme}
             onChange={(value) => setTheme(value as string)}
             pb={16}
+            withinPortal
           />
         </Grid.Col>
       </Grid>
@@ -97,34 +102,20 @@ export default function CopyGroupCard({ defaultOptions }: Props) {
 export const CopyButtons = ({
   label,
   textElement,
-  text,
+  text: value,
+  ...rest
 }: {
   label: string
   textElement: string
   text: string
 }) => {
-  const colorScheme: string = (() => {
-    switch (textElement) {
-      case "sentences":
-        return "teal"
-      case "paragraphs":
-        return "indigo"
-      case "words":
-        return "red"
-      case "json":
-        return "orange"
-      case "array":
-        return "yellow"
-      default:
-        return "black"
-    }
-  })()
+  const [copyHistory, setCopyHistory] = useAtom(localCopyHistoryAtom)
 
   return (
-    <CopyButton value={text}>
+    <CopyButton value={value} {...rest}>
       {({ copied, copy }) => (
         <Tooltip
-          label={text}
+          label={value}
           withinPortal
           multiline
           maw={400}
@@ -136,9 +127,21 @@ export const CopyButtons = ({
           <Button
             size={"md"}
             h={100}
-            color={colorScheme}
+            color={colorSelector(textElement)}
             variant={copied ? "light" : "outline"}
-            onClick={copy}
+            onClick={() => {
+              copy()
+              if (!copyHistory || copyHistory[0]["value"] !== value) {
+                setCopyHistory((history) => [
+                  ...history,
+                  {
+                    id: history.length,
+                    type: textElement,
+                    value: value,
+                  },
+                ])
+              }
+            }}
           >
             {copied ? `Copied ${label}` : label}
           </Button>

@@ -22,6 +22,9 @@ import {
   IconX,
 } from "@tabler/icons-react"
 import { useEffect, useState } from "react"
+import { useAtom } from "jotai"
+import { localCopyHistoryAtom } from "@/pages/_app"
+import { colorSelector } from "@/utils/colorSelector"
 
 type Props = { extension?: boolean }
 type Alias = {
@@ -111,8 +114,16 @@ export default function InputCreator({ extension }: Props) {
     }
   }
 
+  const [copyHistory, setCopyHistory] = useAtom(localCopyHistoryAtom)
+
   const handleCopyEmail = () => {
     setCopiedEmail(aliasedEmail)
+
+    if (copyHistory.find((item) => item.value === aliasedEmail)) return
+    setCopyHistory((history) => [
+      ...history,
+      { id: history.length, type: "email", value: aliasedEmail },
+    ])
   }
 
   return (
@@ -214,6 +225,7 @@ export default function InputCreator({ extension }: Props) {
               <Select
                 clearable
                 allowDeselect
+                withinPortal
                 placeholder="Timestamp"
                 value={selectedAlias}
                 data={aliases}
@@ -256,6 +268,7 @@ export default function InputCreator({ extension }: Props) {
                   onClick={copy}
                   rightIcon={<IconCopy />}
                   disabled={!validateEmail(email) || email.length === 0}
+                  color={colorSelector("email")}
                 >
                   {copied ? `Copied ${copiedEmail}` : `${aliasedEmail}`}
                 </Button>

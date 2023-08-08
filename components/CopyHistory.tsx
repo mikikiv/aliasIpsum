@@ -1,17 +1,16 @@
 import React, { useState } from "react"
 import { useAtomValue } from "jotai"
+import { atomWithStorage } from "jotai/utils"
 import {
   Button,
-  Card,
   CopyButton,
   MantineNumberSize,
   SimpleGrid,
+  Text,
   Tooltip,
 } from "@mantine/core"
-import { CopyHistory, localCopyHistoryAtom } from "@/pages/_app"
 import { IconCopy } from "@tabler/icons-react"
 import { colorSelector } from "@/utils/colorSelector"
-import { useRouter } from "next/router"
 
 type Props = {
   type?: "email" | "text"
@@ -19,6 +18,22 @@ type Props = {
   tooltip?: boolean
   scrollThreshold: number
 }
+
+export type CopyHistory = {
+  id: number
+  type: string
+  value: string
+  timestamp: number
+}
+
+type GroupedCopyHistory = {
+  (dateKey: number): CopyHistory[]
+}
+
+export const localCopyHistoryAtom = atomWithStorage(
+  "copyHistory",
+  [] as CopyHistory[]
+)
 
 export default function CopyHistory({
   type,
@@ -94,51 +109,74 @@ export default function CopyHistory({
     )
   }
 
+  const groupedData = copyHistory.reduce((acc, item) => {
+    const date = new Date(item.timestamp).toLocaleDateString()
+    return {
+      ...acc,
+      [date]: [item, ...(acc[date] || [])],
+    }
+  }, {} as GroupedCopyHistory)
+
+  const dates = Object.keys(groupedData)
+
   return (
     <SimpleGrid cols={1} spacing={spacing}>
-      {copyHistory
-        .sort((a, b) => b.id - a.id)
-        .map((item) => {
+      {dates
+        .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
+        .map((dateKey) => {
           return (
-            <CopyButton value={item.value} timeout={5000}>
-              {({ copied, copy }) => (
-                <Tooltip
-                  label={item.value}
-                  events={
-                    tooltip === true || tooltip === undefined
-                      ? { hover: true, focus: true, touch: true }
-                      : { hover: false, focus: false, touch: false }
-                  }
-                  openDelay={800}
-                  withinPortal
-                  position={"bottom"}
-                >
-                  <Button
-                    leftIcon={<IconCopy />}
-                    color={colorSelector(item.type)}
-                    variant={copied ? "filled" : "outline"}
-                    onClick={copy}
-                    key={item.id}
+            <>
+              <Text key={dateKey} size="xs" weight={700}>
+                {dateKey}
+              </Text>
+              {groupedData[dateKey]?.map((historyItem) => {
+                return (
+                  <CopyButton
+                    key={historyItem.id}
+                    value={historyItem.value}
+                    timeout={5000}
                   >
-                    <ScrollingText
-                      scrollThreshold={scrollThreshold}
-                      scrolling={copied ? false : true}
-                    >
-                      {copied
-                        ? `${
-                            item.type === "email"
-                              ? item.value
-                              : item.type.charAt(0).toUpperCase() +
-                                item.type.slice(1)
-                          }  Copied!`
-                        : `${item.id}: ${item.value}`}
-                    </ScrollingText>
-                  </Button>
-                </Tooltip>
-              )}
-            </CopyButton>
+                    {({ copied, copy }) => (
+                      <Tooltip
+                        label={historyItem.value}
+                        events={
+                          tooltip === true || tooltip === undefined
+                            ? { hover: true, focus: true, touch: true }
+                            : { hover: false, focus: false, touch: false }
+                        }
+                        openDelay={800}
+                        withinPortal
+                        position={"bottom"}
+                      >
+                        <Button
+                          leftIcon={<IconCopy />}
+                          color={colorSelector(historyItem.type)}
+                          variant={copied ? "filled" : "outline"}
+                          onClick={copy}
+                        >
+                          <ScrollingText
+                            scrollThreshold={scrollThreshold}
+                            scrolling={copied ? false : true}
+                          >
+                            {copied
+                              ? `${
+                                  historyItem.type === "email"
+                                    ? historyItem.value
+                                    : historyItem.type.charAt(0).toUpperCase() +
+                                      historyItem.type.slice(1)
+                                }  Copied!`
+                              : `${historyItem.id}: ${historyItem.value}`}
+                          </ScrollingText>
+                        </Button>
+                      </Tooltip>
+                    )}
+                  </CopyButton>
+                )
+              })}
+            </>
           )
         })}
     </SimpleGrid>
   )
 }
+

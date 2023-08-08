@@ -23,8 +23,8 @@ import {
 } from "@tabler/icons-react"
 import { useEffect, useState } from "react"
 import { useAtom } from "jotai"
-import { localCopyHistoryAtom } from "@/pages/_app"
 import { colorSelector } from "@/utils/colorSelector"
+import { localCopyHistoryAtom } from "./CopyHistory"
 
 type Props = { extension?: boolean }
 type Alias = {
@@ -122,7 +122,12 @@ export default function InputCreator({ extension }: Props) {
     if (copyHistory.find((item) => item.value === aliasedEmail)) return
     setCopyHistory((history) => [
       ...history,
-      { id: history.length, type: "email", value: aliasedEmail },
+      {
+        id: history.length,
+        type: "email",
+        value: aliasedEmail,
+        timestamp: Date.now(),
+      },
     ])
   }
 

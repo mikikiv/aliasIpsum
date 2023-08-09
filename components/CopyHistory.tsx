@@ -109,70 +109,92 @@ export default function CopyHistory({
     )
   }
 
-  const groupedData = copyHistory.reduce((acc, item) => {
-    const date = new Date(item.timestamp).toLocaleDateString()
-    return {
-      ...acc,
-      [date]: [item, ...(acc[date] || [])],
-    }
-  }, {} as GroupedCopyHistory)
+  const CopyHistoryItem = ({
+    historyItem,
+    ...rest
+  }: {
+    historyItem: CopyHistory
+  }) => {
+    return (
+      <CopyButton key={historyItem.id} value={historyItem.value} timeout={5000}>
+        {({ copied, copy }) => (
+          <Tooltip
+            label={historyItem.value}
+            events={
+              tooltip === true || tooltip === undefined
+                ? { hover: true, focus: true, touch: true }
+                : { hover: false, focus: false, touch: false }
+            }
+            openDelay={800}
+            withinPortal
+            position={"bottom"}
+          >
+            <Button
+              leftIcon={<IconCopy />}
+              color={colorSelector(historyItem.type)}
+              variant={copied ? "filled" : "outline"}
+              onClick={copy}
+            >
+              <ScrollingText
+                scrollThreshold={scrollThreshold}
+                scrolling={copied ? false : true}
+              >
+                {copied
+                  ? `${
+                      historyItem.type === "email"
+                        ? historyItem.value
+                        : historyItem.type.charAt(0).toUpperCase() +
+                          historyItem.type.slice(1)
+                    }  Copied!`
+                  : `${historyItem.id}: ${historyItem.value}`}
+              </ScrollingText>
+            </Button>
+          </Tooltip>
+        )}
+      </CopyButton>
+    )
+  }
 
-  const dates = Object.keys(groupedData)
+  const groupedData: { [key: number]: CopyHistory[] } = copyHistory.reduce(
+    (acc, item) => {
+      const date = (item.timestamp - (item.timestamp % 86400000)) as number
+      const groupedData = acc
+      if (groupedData[date]) {
+        groupedData[date].push(item)
+      } else {
+        groupedData[date] = [item]
+      }
+      return groupedData
+    },
+    {} as { [key: number]: CopyHistory[] }
+  )
+
+  const dateKeys = Object.keys(groupedData)
 
   return (
     <SimpleGrid cols={1} spacing={spacing}>
-      {dates
-        .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
-        .map((dateKey) => {
+      {dateKeys
+        .sort((a, b) => parseInt(b) - parseInt(a))
+        .map((dates) => {
           return (
             <>
-              <Text key={dateKey} size="xs" weight={700}>
-                {dateKey}
+              <Text key={dates} size="xs" weight={700}>
+                {
+                  // display as the date
+                  new Date(parseInt(dates)).toLocaleDateString("en-US", {
+                    weekday: "short",
+                    year: "numeric",
+                    month: "numeric",
+                    day: "numeric",
+                  })
+                }
               </Text>
-              {groupedData[dateKey]?.map((historyItem) => {
-                return (
-                  <CopyButton
-                    key={historyItem.id}
-                    value={historyItem.value}
-                    timeout={5000}
-                  >
-                    {({ copied, copy }) => (
-                      <Tooltip
-                        label={historyItem.value}
-                        events={
-                          tooltip === true || tooltip === undefined
-                            ? { hover: true, focus: true, touch: true }
-                            : { hover: false, focus: false, touch: false }
-                        }
-                        openDelay={800}
-                        withinPortal
-                        position={"bottom"}
-                      >
-                        <Button
-                          leftIcon={<IconCopy />}
-                          color={colorSelector(historyItem.type)}
-                          variant={copied ? "filled" : "outline"}
-                          onClick={copy}
-                        >
-                          <ScrollingText
-                            scrollThreshold={scrollThreshold}
-                            scrolling={copied ? false : true}
-                          >
-                            {copied
-                              ? `${
-                                  historyItem.type === "email"
-                                    ? historyItem.value
-                                    : historyItem.type.charAt(0).toUpperCase() +
-                                      historyItem.type.slice(1)
-                                }  Copied!`
-                              : `${historyItem.id}: ${historyItem.value}`}
-                          </ScrollingText>
-                        </Button>
-                      </Tooltip>
-                    )}
-                  </CopyButton>
-                )
-              })}
+              {groupedData[parseInt(dates)]
+                .sort()
+                .reverse()
+                .map((historyItem: CopyHistory) => (
+                  <CopyHistoryItem historyItem={historyItem} />
+                ))}
             </>
           )
         })}

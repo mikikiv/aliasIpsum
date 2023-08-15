@@ -2,10 +2,16 @@ import React, { useState } from "react"
 import { useAtomValue } from "jotai"
 import { atomWithStorage } from "jotai/utils"
 import {
+  Badge,
+  Box,
   Button,
+  Col,
   CopyButton,
+  Flex,
+  Grid,
   MantineNumberSize,
   SimpleGrid,
+  Stack,
   Text,
   Tooltip,
 } from "@mantine/core"
@@ -26,8 +32,8 @@ export type CopyHistory = {
   timestamp: number
 }
 
-type GroupedCopyHistory = {
-  (dateKey: number): CopyHistory[]
+interface GroupedCopyHistory {
+  [dateKey: number]: CopyHistory[]
 }
 
 export const localCopyHistoryAtom = atomWithStorage(
@@ -116,7 +122,7 @@ export default function CopyHistory({
     historyItem: CopyHistory
   }) => {
     return (
-      <CopyButton key={historyItem.id} value={historyItem.value} timeout={5000}>
+      <CopyButton value={historyItem.value} timeout={5000}>
         {({ copied, copy }) => (
           <Tooltip
             label={historyItem.value}
@@ -157,7 +163,11 @@ export default function CopyHistory({
 
   const groupedData: { [key: number]: CopyHistory[] } = copyHistory.reduce(
     (acc, item) => {
-      const date = (item.timestamp - (item.timestamp % 86400000)) as number
+      let itemTimestamp = item.timestamp as number
+      if (!item.timestamp) {
+        itemTimestamp = new Date(946800000000) as any
+      }
+      const date = (itemTimestamp - (itemTimestamp % 86400000)) as number
       const groupedData = acc
       if (groupedData[date]) {
         groupedData[date].push(item)
@@ -171,34 +181,65 @@ export default function CopyHistory({
 
   const dateKeys = Object.keys(groupedData)
 
+  const parseDate = (date: number, weekday?: boolean) => {
+    if (weekday !== false) {
+      return new Date(date).toLocaleDateString("en-US", {
+        weekday: "short",
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+      })
+    } else {
+      return new Date(date).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+      })
+    }
+  }
+
   return (
-    <SimpleGrid cols={1} spacing={spacing}>
+    <>
       {dateKeys
         .sort((a, b) => parseInt(b) - parseInt(a))
         .map((dates) => {
           return (
-            <>
-              <Text key={dates} size="xs" weight={700}>
-                {
-                  // display as the date
-                  new Date(parseInt(dates)).toLocaleDateString("en-US", {
-                    weekday: "short",
-                    year: "numeric",
-                    month: "numeric",
-                    day: "numeric",
-                  })
-                }
-              </Text>
-              {groupedData[parseInt(dates)]
-                .sort()
-                .reverse()
-                .map((historyItem: CopyHistory) => (
-                  <CopyHistoryItem historyItem={historyItem} />
-                ))}
-            </>
+            <Box key={"info-" + dates}>
+              <Flex justify={"space-between"} pt={8} pb={4}>
+                <Badge
+                  variant={
+                    parseDate(parseInt(dates)) ===
+                    parseDate(new Date(Date.now()) as any)
+                      ? "dot"
+                      : "outline"
+                  }
+                  color="gray"
+                  size="sm"
+                >
+                  {groupedData[parseInt(dates)].length}
+                </Badge>
+                <Text key={dates} size="xs" weight={700}>
+                  {parseDate(parseInt(dates)) ===
+                  parseDate(new Date(Date.now()) as any)
+                    ? "Today, " + parseDate(parseInt(dates), false)
+                    : parseDate(parseInt(dates))}
+                </Text>
+              </Flex>
+              <SimpleGrid verticalSpacing="xs" key={"button-" + dates}>
+                {groupedData[parseInt(dates)]
+                  .sort()
+                  .reverse()
+                  .map((historyItem: CopyHistory) => (
+                    <CopyHistoryItem
+                      historyItem={historyItem}
+                      key={historyItem.id}
+                    />
+                  ))}
+              </SimpleGrid>
+            </Box>
           )
         })}
-    </SimpleGrid>
+    </>
   )
 }
 

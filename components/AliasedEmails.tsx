@@ -23,8 +23,8 @@ import {
 } from "@tabler/icons-react"
 import { useEffect, useState } from "react"
 import { useAtom } from "jotai"
-import { localCopyHistoryAtom } from "@/pages/_app"
 import { colorSelector } from "@/utils/colorSelector"
+import { localCopyHistoryAtom } from "./CopyHistory"
 
 type Props = { extension?: boolean }
 type Alias = {
@@ -46,18 +46,14 @@ export default function InputCreator({ extension }: Props) {
   const [realtimeTimestamp, setRealtimeTimestamp] = useState("")
   const [copiedEmail, setCopiedEmail] = useState("")
 
-  const timestamp = new Date(Date.now())
-    .toISOString()
-    .split(".")[0]
-    .replaceAll(/[-:]/g, "")
-    .replace("T", "-")
+  const timestamp = new Date().getTime().toLocaleString()
 
   const updateTimestamp = () => {
     const updatingTimestamp = new Date(Date.now())
-      .toISOString()
-      .split(".")[0]
-      .replaceAll(/[-:]/g, "")
-      .replace("T", "-")
+      .toLocaleString("en-US", { hour12: false })
+      .replaceAll(/[-:\/\,APM]/g, "")
+      .replace(/\s$/g, "")
+      .replace(/\s/g, "-")
     setRealtimeTimestamp(updatingTimestamp)
   }
 
@@ -122,7 +118,14 @@ export default function InputCreator({ extension }: Props) {
     if (copyHistory.find((item) => item.value === aliasedEmail)) return
     setCopyHistory((history) => [
       ...history,
-      { id: history.length, type: "email", value: aliasedEmail },
+      {
+        id: history.length,
+        type: "email",
+        value: aliasedEmail,
+        timestamp: parseInt(
+          new Date().getTime().toLocaleString().replaceAll(",", "")
+        ) as any,
+      },
     ])
   }
 

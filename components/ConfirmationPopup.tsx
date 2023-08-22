@@ -12,6 +12,7 @@ import React, { useState } from "react"
 
 type Props = {
   title?: string
+  buttonText: string
   description?: string
   confirmLabel?: string
   cancelLabel?: string
@@ -23,6 +24,7 @@ type Props = {
 }
 export default function ConfirmationPopup({
   title,
+  buttonText,
   description,
   confirmLabel,
   cancelLabel,
@@ -62,7 +64,7 @@ export default function ConfirmationPopup({
               setOpened(true)
             }}
           >
-            Clear History
+            {buttonText}
           </Badge>
         </Popover.Target>
         <Popover.Dropdown>

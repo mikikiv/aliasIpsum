@@ -13,7 +13,7 @@ import {
 import React, { useState } from "react"
 import { PlaceText } from "../utils/transformer"
 import { useAtom } from "jotai"
-import { localCopyHistoryAtom } from "@/pages/_app"
+import { localCopyHistoryAtom } from "./CopyHistory"
 import { colorSelector } from "@/utils/colorSelector"
 
 interface Props {
@@ -138,6 +138,7 @@ export const CopyButtons = ({
                     id: history.length,
                     type: textElement,
                     value: value,
+                    timestamp: Date.now() as any,
                   },
                 ])
               }

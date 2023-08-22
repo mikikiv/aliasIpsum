@@ -1,17 +1,19 @@
 import React, { useState } from "react"
-import { useAtomValue } from "jotai"
+import { useAtom, useAtomValue } from "jotai"
+import { RESET, atomWithStorage } from "jotai/utils"
 import {
+  Badge,
+  Box,
   Button,
-  Card,
   CopyButton,
+  Flex,
   MantineNumberSize,
   SimpleGrid,
+  Text,
   Tooltip,
 } from "@mantine/core"
-import { CopyHistory, localCopyHistoryAtom } from "@/pages/_app"
 import { IconCopy } from "@tabler/icons-react"
 import { colorSelector } from "@/utils/colorSelector"
-import { useRouter } from "next/router"
 
 type Props = {
   type?: "email" | "text"
@@ -20,12 +22,23 @@ type Props = {
   scrollThreshold: number
 }
 
-export default function CopyHistory({
-  type,
-  spacing,
-  tooltip,
-  scrollThreshold,
-}: Props) {
+export type CopyHistory = {
+  id: number
+  type: string
+  value: string
+  timestamp: string
+}
+
+interface GroupedCopyHistory {
+  [dateKey: number]: CopyHistory[]
+}
+
+export const localCopyHistoryAtom = atomWithStorage(
+  "copyHistory",
+  [] as CopyHistory[]
+)
+
+export default function CopyHistory({ type, tooltip, scrollThreshold }: Props) {
   let copyHistory = useAtomValue(localCopyHistoryAtom)
 
   type == "email" &&
@@ -94,51 +107,160 @@ export default function CopyHistory({
     )
   }
 
+  const CopyHistoryItem = ({
+    historyItem,
+    ...rest
+  }: {
+    historyItem: CopyHistory
+  }) => {
+    return (
+      <CopyButton value={historyItem.value} timeout={5000}>
+        {({ copied, copy }) => (
+          <Tooltip
+            label={historyItem.value}
+            events={
+              tooltip === true || tooltip === undefined
+                ? { hover: true, focus: true, touch: true }
+                : { hover: false, focus: false, touch: false }
+            }
+            openDelay={800}
+            withinPortal
+            position={"bottom"}
+          >
+            <Button
+              leftIcon={<IconCopy />}
+              color={colorSelector(historyItem.type)}
+              variant={copied ? "filled" : "outline"}
+              onClick={copy}
+            >
+              <ScrollingText
+                scrollThreshold={scrollThreshold}
+                scrolling={copied ? false : true}
+              >
+                {copied
+                  ? `${
+                      historyItem.type === "email"
+                        ? historyItem.value
+                        : historyItem.type.charAt(0).toUpperCase() +
+                          historyItem.type.slice(1)
+                    }  Copied!`
+                  : `${historyItem.id}: ${historyItem.value}`}
+              </ScrollingText>
+            </Button>
+          </Tooltip>
+        )}
+      </CopyButton>
+    )
+  }
+
+  const parseDate = (date: string, weekday?: boolean) => {
+    if (weekday !== false) {
+      return new Date(date).toLocaleDateString("en-US", {
+        weekday: "short",
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+      })
+    } else {
+      return new Date(date).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+      })
+    }
+  }
+
+  const groupedData: { [key: string]: CopyHistory[] } = copyHistory.reduce(
+    (acc: { [key: string]: CopyHistory[] }, item) => {
+      let itemTimestamp = item.timestamp
+      if (!item.timestamp) {
+        itemTimestamp = new Date(946800000000).getTime().toLocaleString()
+      }
+      const date = parseDate(itemTimestamp)
+
+      const groupedData = acc
+      if (groupedData[date]) {
+        groupedData[date].push(item)
+      } else {
+        groupedData[date] = [item]
+      }
+      return groupedData
+    },
+    {} as { [key: string]: CopyHistory[] }
+  )
+
+  const dateKeys = Object.keys(groupedData)
+  const [deleting, setDeleting] = useState(false)
+
+  const [history, setHistory] = useAtom(localCopyHistoryAtom)
+
+  const handleDeleteHistoryGroup = (date: number) => {
+    setHistory((history) =>
+      history.filter(
+        (item) => parseDate(item.timestamp) !== parseDate(date.toLocaleString())
+      )
+    )
+  }
+
   return (
-    <SimpleGrid cols={1} spacing={spacing}>
-      {copyHistory
-        .sort((a, b) => b.id - a.id)
-        .map((item) => {
-          return (
-            <CopyButton value={item.value} timeout={5000}>
-              {({ copied, copy }) => (
-                <Tooltip
-                  label={item.value}
-                  events={
-                    tooltip === true || tooltip === undefined
-                      ? { hover: true, focus: true, touch: true }
-                      : { hover: false, focus: false, touch: false }
-                  }
-                  openDelay={800}
-                  withinPortal
-                  position={"bottom"}
-                >
-                  <Button
-                    leftIcon={<IconCopy />}
-                    color={colorSelector(item.type)}
-                    variant={copied ? "filled" : "outline"}
-                    onClick={copy}
-                    key={item.id}
+    <>
+      {dateKeys.sort().map((dates) => {
+        console.log(dates)
+        return (
+          <Box key={"info-" + dates}>
+            <Flex justify={"space-between"} pt={8} pb={4}>
+              {!deleting ? (
+                <>
+                  <Badge
+                    // style={{ cursor: "pointer" }}
+                    // onClick={() => setDeleting(true)}
+                    variant={
+                      parseDate(new Date(dates).getTime().toLocaleString()) ===
+                      parseDate(new Date().getTime().toLocaleString())
+                        ? "dot"
+                        : "light"
+                    }
+                    color="green"
+                    size="sm"
                   >
-                    <ScrollingText
-                      scrollThreshold={scrollThreshold}
-                      scrolling={copied ? false : true}
-                    >
-                      {copied
-                        ? `${
-                            item.type === "email"
-                              ? item.value
-                              : item.type.charAt(0).toUpperCase() +
-                                item.type.slice(1)
-                          }  Copied!`
-                        : `${item.id}: ${item.value}`}
-                    </ScrollingText>
+                    {groupedData[dates].length}
+                  </Badge>
+                  <Text key={dates} size="xs" weight={700}>
+                    {dates === parseDate(new Date().getTime().toLocaleString())
+                      ? "Today, " + dates
+                      : dates}
+                  </Text>
+                </>
+              ) : (
+                <Button.Group>
+                  <Button onClick={() => setDeleting(false)}>Cancel</Button>
+                  <Button
+                    fullWidth
+                    color="red"
+                    onClick={() => {
+                      handleDeleteHistoryGroup(parseInt(dates))
+                    }}
+                  >
+                    Clear
                   </Button>
-                </Tooltip>
+                </Button.Group>
               )}
-            </CopyButton>
-          )
-        })}
-    </SimpleGrid>
+            </Flex>
+            <SimpleGrid verticalSpacing="xs" key={"button-" + dates}>
+              {groupedData[dates]
+                .sort()
+                .reverse()
+                .map((historyItem: CopyHistory) => (
+                  <CopyHistoryItem
+                    historyItem={historyItem}
+                    key={historyItem.id}
+                  />
+                ))}
+            </SimpleGrid>
+          </Box>
+        )
+      })}
+    </>
   )
 }
+

@@ -23,7 +23,7 @@ import { IconBrandGithub } from "@tabler/icons-react"
 import HomepageHero from "../components/HomepageHero"
 import { useRouter } from "next/router"
 import { Provider as JotaiProvider, useAtom } from "jotai"
-import CopyHistory from "@/components/CopyHistory"
+import CopyHistory, { localCopyHistoryAtom } from "@/components/CopyHistory"
 import ConfirmationPopup from "@/components/ConfirmationPopup"
 import { RESET, atomWithStorage } from "jotai/utils"
 
@@ -79,16 +79,9 @@ export default function App(props: AppProps) {
   )
 }
 
-export type CopyHistory = {
-  id: number
-  type: string
-  value: string
-}
 
-export const localCopyHistoryAtom = atomWithStorage(
-  "copyHistory",
-  [] as CopyHistory[]
-)
+
+
 
 const ClearHistoryButton = () => {
   const [history, setHistory] = useAtom(localCopyHistoryAtom)
@@ -100,6 +93,7 @@ const ClearHistoryButton = () => {
   return (
     <ConfirmationPopup
       description="Are you sure you want to clear your copy history?"
+      buttonText="Clear History"
       confirmLabel="Delete"
       cancelLabel="Cancel"
       onConfirm={() => handleDeleteHistory()}

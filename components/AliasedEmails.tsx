@@ -46,18 +46,14 @@ export default function InputCreator({ extension }: Props) {
   const [realtimeTimestamp, setRealtimeTimestamp] = useState("")
   const [copiedEmail, setCopiedEmail] = useState("")
 
-  const timestamp = new Date(Date.now())
-    .toISOString()
-    .split(".")[0]
-    .replaceAll(/[-:]/g, "")
-    .replace("T", "-")
+  const timestamp = new Date().getTime().toLocaleString()
 
   const updateTimestamp = () => {
     const updatingTimestamp = new Date(Date.now())
-      .toISOString()
-      .split(".")[0]
-      .replaceAll(/[-:]/g, "")
-      .replace("T", "-")
+      .toLocaleString("en-US", { hour12: false })
+      .replaceAll(/[-:\/\,APM]/g, "")
+      .replace(/\s$/g, "")
+      .replace(/\s/g, "-")
     setRealtimeTimestamp(updatingTimestamp)
   }
 
@@ -126,7 +122,9 @@ export default function InputCreator({ extension }: Props) {
         id: history.length,
         type: "email",
         value: aliasedEmail,
-        timestamp: new Date().getTime(),
+        timestamp: parseInt(
+          new Date().getTime().toLocaleString().replaceAll(",", "")
+        ) as any,
       },
     ])
   }

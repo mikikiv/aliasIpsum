@@ -138,7 +138,7 @@ export const CopyButtons = ({
                     id: history.length,
                     type: textElement,
                     value: value,
-                    timestamp: Date.now(),
+                    timestamp: Date.now() as any,
                   },
                 ])
               }

@@ -26,7 +26,7 @@ export type CopyHistory = {
   id: number
   type: string
   value: string
-  timestamp: number
+  timestamp: string
 }
 
 interface GroupedCopyHistory {
@@ -38,12 +38,7 @@ export const localCopyHistoryAtom = atomWithStorage(
   [] as CopyHistory[]
 )
 
-export default function CopyHistory({
-  type,
-  spacing,
-  tooltip,
-  scrollThreshold,
-}: Props) {
+export default function CopyHistory({ type, tooltip, scrollThreshold }: Props) {
   let copyHistory = useAtomValue(localCopyHistoryAtom)
 
   type == "email" &&
@@ -158,7 +153,7 @@ export default function CopyHistory({
     )
   }
 
-  const parseDate = (date: number, weekday?: boolean) => {
+  const parseDate = (date: string, weekday?: boolean) => {
     if (weekday !== false) {
       return new Date(date).toLocaleDateString("en-US", {
         weekday: "short",
@@ -179,7 +174,7 @@ export default function CopyHistory({
     (acc: { [key: string]: CopyHistory[] }, item) => {
       let itemTimestamp = item.timestamp
       if (!item.timestamp) {
-        itemTimestamp = new Date(946800000000).getTime()
+        itemTimestamp = new Date(946800000000).getTime().toLocaleString()
       }
       const date = parseDate(itemTimestamp)
 
@@ -201,13 +196,16 @@ export default function CopyHistory({
 
   const handleDeleteHistoryGroup = (date: number) => {
     setHistory((history) =>
-      history.filter((item) => parseDate(item.timestamp) !== parseDate(date))
+      history.filter(
+        (item) => parseDate(item.timestamp) !== parseDate(date.toLocaleString())
+      )
     )
   }
 
   return (
     <>
       {dateKeys.sort().map((dates) => {
+        console.log(dates)
         return (
           <Box key={"info-" + dates}>
             <Flex justify={"space-between"} pt={8} pb={4}>
@@ -217,8 +215,8 @@ export default function CopyHistory({
                     // style={{ cursor: "pointer" }}
                     // onClick={() => setDeleting(true)}
                     variant={
-                      parseDate(new Date(dates).getTime()) ===
-                      parseDate(new Date().getTime())
+                      parseDate(new Date(dates).getTime().toLocaleString()) ===
+                      parseDate(new Date().getTime().toLocaleString())
                         ? "dot"
                         : "light"
                     }
@@ -228,7 +226,7 @@ export default function CopyHistory({
                     {groupedData[dates].length}
                   </Badge>
                   <Text key={dates} size="xs" weight={700}>
-                    {dates === parseDate(new Date().getTime())
+                    {dates === parseDate(new Date().getTime().toLocaleString())
                       ? "Today, " + dates
                       : dates}
                   </Text>

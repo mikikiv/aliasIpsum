@@ -46,13 +46,15 @@ export default function InputCreator({ extension }: Props) {
   const [realtimeTimestamp, setRealtimeTimestamp] = useState("")
   const [copiedEmail, setCopiedEmail] = useState("")
 
-  const timestamp = new Date().getTime().toLocaleString()
+  const timestamp = new Date().getTime()
 
   const updateTimestamp = () => {
     const updatingTimestamp = new Date(Date.now())
-      .toLocaleString("en-US", { hour12: false })
-      .replaceAll(/[-:\/\,APM]/g, "")
-      .replace(/\s$/g, "")
+      .toLocaleString("en-US", {
+        hour12: false,
+      })
+      .replaceAll(/[:\,]/g, "")
+      .replaceAll(/[\/]/g, "_")
       .replace(/\s/g, "-")
     setRealtimeTimestamp(updatingTimestamp)
   }
@@ -87,7 +89,12 @@ export default function InputCreator({ extension }: Props) {
 
   const handleChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value)
-    setAliasedEmail(addAliasToEmail(e.target.value, selectedAlias || timestamp))
+    setAliasedEmail(
+      addAliasToEmail(
+        e.target.value,
+        selectedAlias || new Date(timestamp).getTime().toString()
+      )
+    )
   }
 
   const handleCreateAlias = (query: string) => {
@@ -122,9 +129,7 @@ export default function InputCreator({ extension }: Props) {
         id: history.length,
         type: "email",
         value: aliasedEmail,
-        timestamp: parseInt(
-          new Date().getTime().toLocaleString().replaceAll(",", "")
-        ) as any,
+        timestamp: new Date().getTime(),
       },
     ])
   }

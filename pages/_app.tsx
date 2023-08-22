@@ -93,6 +93,7 @@ const ClearHistoryButton = () => {
   return (
     <ConfirmationPopup
       description="Are you sure you want to clear your copy history?"
+      buttonText="Clear History"
       confirmLabel="Delete"
       cancelLabel="Cancel"
       onConfirm={() => handleDeleteHistory()}

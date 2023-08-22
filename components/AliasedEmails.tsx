@@ -126,7 +126,7 @@ export default function InputCreator({ extension }: Props) {
         id: history.length,
         type: "email",
         value: aliasedEmail,
-        timestamp: Date.now(),
+        timestamp: new Date().getTime(),
       },
     ])
   }

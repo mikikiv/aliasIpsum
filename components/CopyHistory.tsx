@@ -26,7 +26,7 @@ export type CopyHistory = {
   id: number
   type: string
   value: string
-  timestamp: string
+  timestamp?: number
 }
 
 interface GroupedCopyHistory {
@@ -153,7 +153,7 @@ export default function CopyHistory({ type, tooltip, scrollThreshold }: Props) {
     )
   }
 
-  const parseDate = (date: string, weekday?: boolean) => {
+  const parseDate = (date: Date, weekday?: boolean) => {
     if (weekday !== false) {
       return new Date(date).toLocaleDateString("en-US", {
         weekday: "short",
@@ -173,10 +173,10 @@ export default function CopyHistory({ type, tooltip, scrollThreshold }: Props) {
   const groupedData: { [key: string]: CopyHistory[] } = copyHistory.reduce(
     (acc: { [key: string]: CopyHistory[] }, item) => {
       let itemTimestamp = item.timestamp
-      if (!item.timestamp) {
-        itemTimestamp = new Date(946800000000).getTime().toLocaleString()
+      if (itemTimestamp == undefined || itemTimestamp == null) {
+        itemTimestamp = new Date(946800000000).getTime()
       }
-      const date = parseDate(itemTimestamp)
+      const date = parseDate(new Date(itemTimestamp))
 
       const groupedData = acc
       if (groupedData[date]) {
@@ -196,70 +196,75 @@ export default function CopyHistory({ type, tooltip, scrollThreshold }: Props) {
 
   const handleDeleteHistoryGroup = (date: number) => {
     setHistory((history) =>
-      history.filter(
-        (item) => parseDate(item.timestamp) !== parseDate(date.toLocaleString())
-      )
+      history.filter((item) => {
+        let itemTimestamp = item.timestamp
+        if (itemTimestamp == undefined || itemTimestamp == null) {
+          itemTimestamp = new Date(946800000000).getTime()
+        }
+        parseDate(new Date(itemTimestamp)) !== parseDate(new Date(date))
+      })
     )
   }
 
   return (
     <>
-      {dateKeys.sort().map((dates) => {
-        console.log(dates)
-        return (
-          <Box key={"info-" + dates}>
-            <Flex justify={"space-between"} pt={8} pb={4}>
-              {!deleting ? (
-                <>
-                  <Badge
-                    // style={{ cursor: "pointer" }}
-                    // onClick={() => setDeleting(true)}
-                    variant={
-                      parseDate(new Date(dates).getTime().toLocaleString()) ===
-                      parseDate(new Date().getTime().toLocaleString())
-                        ? "dot"
-                        : "light"
-                    }
-                    color="green"
-                    size="sm"
-                  >
-                    {groupedData[dates].length}
-                  </Badge>
-                  <Text key={dates} size="xs" weight={700}>
-                    {dates === parseDate(new Date().getTime().toLocaleString())
-                      ? "Today, " + dates
-                      : dates}
-                  </Text>
-                </>
-              ) : (
-                <Button.Group>
-                  <Button onClick={() => setDeleting(false)}>Cancel</Button>
-                  <Button
-                    fullWidth
-                    color="red"
-                    onClick={() => {
-                      handleDeleteHistoryGroup(parseInt(dates))
-                    }}
-                  >
-                    Clear
-                  </Button>
-                </Button.Group>
-              )}
-            </Flex>
-            <SimpleGrid verticalSpacing="xs" key={"button-" + dates}>
-              {groupedData[dates]
-                .sort()
-                .reverse()
-                .map((historyItem: CopyHistory) => (
-                  <CopyHistoryItem
-                    historyItem={historyItem}
-                    key={historyItem.id}
-                  />
-                ))}
-            </SimpleGrid>
-          </Box>
-        )
-      })}
+      {dateKeys
+        .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
+        .map((dates) => {
+          console.log(dates)
+          return (
+            <Box key={"info-" + dates}>
+              <Flex justify={"space-between"} pt={8} pb={4}>
+                {!deleting ? (
+                  <>
+                    <Badge
+                      // style={{ cursor: "pointer" }}
+                      // onClick={() => setDeleting(true)}
+                      variant={
+                        parseDate(new Date(dates)) === parseDate(new Date())
+                          ? "dot"
+                          : "outline"
+                      }
+                      color="green"
+                      size="sm"
+                    >
+                      {groupedData[dates].length}
+                    </Badge>
+                    <Text key={dates} size="xs" weight={700}>
+                      {dates === parseDate(new Date())
+                        ? "Today, " + parseDate(new Date(dates), false)
+                        : parseDate(new Date(dates), true)}
+                    </Text>
+                  </>
+                ) : (
+                  <Button.Group>
+                    <Button onClick={() => setDeleting(false)}>Cancel</Button>
+                    <Button
+                      fullWidth
+                      color="red"
+                      onClick={() => {
+                        handleDeleteHistoryGroup(parseInt(dates))
+                      }}
+                    >
+                      Clear
+                    </Button>
+                  </Button.Group>
+                )}
+              </Flex>
+              <SimpleGrid verticalSpacing="xs" key={"button-" + dates}>
+                {groupedData[dates]
+                  .sort()
+                  .reverse()
+                  .map((historyItem: CopyHistory) => (
+                    <CopyHistoryItem
+                      historyItem={historyItem}
+                      key={historyItem.id}
+                    />
+                  ))}
+              </SimpleGrid>
+            </Box>
+          )
+        })}
     </>
   )
 }

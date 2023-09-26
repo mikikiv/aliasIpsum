@@ -7,6 +7,7 @@ import {
   Input,
   Select,
   SimpleGrid,
+  Switch,
   Text,
   Tooltip,
   rem,
@@ -45,6 +46,7 @@ export default function InputCreator({ extension }: Props) {
   const [aliasedEmail, setAliasedEmail] = useState("")
   const [realtimeTimestamp, setRealtimeTimestamp] = useState("")
   const [copiedEmail, setCopiedEmail] = useState("")
+  const [timestampEnabled, setTimestampEnabled] = useState(true)
 
   const timestamp = new Date().getTime()
 
@@ -67,18 +69,19 @@ export default function InputCreator({ extension }: Props) {
 
   const addAliasToEmail = (email: string, alias: string) => {
     if (!email) return ""
-    return email.split("@").join(`+${alias}@`)
+    return email.split("@").join(alias ? '+' + alias + '@' : '' + '@')
   }
 
   useEffect(() => {
     //every time the selected alias changes, update the aliased email
     setAliasedEmail(
+      timestampEnabled ? 
       addAliasToEmail(
         email,
         selectedAlias
           ? `${selectedAlias}-${realtimeTimestamp}`
           : realtimeTimestamp
-      )
+      ) : addAliasToEmail(email, selectedAlias)
     )
   }, [email, selectedAlias, realtimeTimestamp])
 
@@ -166,12 +169,12 @@ export default function InputCreator({ extension }: Props) {
                   label="Your email is only saved to your current browser for your convenience."
                   position="left"
                 >
-                  <div>
+                  <Box>
                     <IconAlertCircle
                       size="1rem"
                       style={{ display: "block", opacity: 0.5 }}
                     />
-                  </div>
+                  </Box>
                 </Tooltip>
               }
             />
@@ -261,6 +264,17 @@ export default function InputCreator({ extension }: Props) {
                 }}
               />
             )}
+          </Box>
+        </Grid.Col>
+        
+        <Grid.Col span={6}>
+          <Box>
+            <Switch
+              label='Timestamp'
+              labelPosition='left'
+              checked={timestampEnabled}
+              onChange={(event) => setTimestampEnabled(event.currentTarget.checked)}
+            />
           </Box>
         </Grid.Col>
 

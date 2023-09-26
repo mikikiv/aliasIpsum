@@ -13,7 +13,7 @@ import {
   rem,
 } from "@mantine/core"
 import { useLocalStorage } from "@mantine/hooks"
-
+import { faker } from "@faker-js/faker"
 import {
   IconAlertCircle,
   IconCopy,
@@ -47,6 +47,7 @@ export default function InputCreator({ extension }: Props) {
   const [realtimeTimestamp, setRealtimeTimestamp] = useState("")
   const [copiedEmail, setCopiedEmail] = useState("")
   const [timestampEnabled, setTimestampEnabled] = useState(true)
+  const [randomAlias, setRandomAlias] = useState(false)
 
   const timestamp = new Date().getTime()
 
@@ -75,13 +76,13 @@ export default function InputCreator({ extension }: Props) {
   useEffect(() => {
     //every time the selected alias changes, update the aliased email
     setAliasedEmail(
-      timestampEnabled ? 
-      addAliasToEmail(
-        email,
-        selectedAlias
-          ? `${selectedAlias}-${realtimeTimestamp}`
-          : realtimeTimestamp
-      ) : addAliasToEmail(email, selectedAlias)
+      timestampEnabled ?
+        addAliasToEmail(
+          email,
+          selectedAlias
+            ? `${selectedAlias}-${realtimeTimestamp}`
+            : realtimeTimestamp
+        ) : addAliasToEmail(email, selectedAlias)
     )
   }, [email, selectedAlias, realtimeTimestamp])
 
@@ -108,6 +109,7 @@ export default function InputCreator({ extension }: Props) {
       ...aliases,
       { label: query, value: query.trim().replaceAll(/\W/g, "") },
     ])
+    setRandomAlias(false)
   }
   const [editingAliases, setEditingAliases] = useState(false)
 
@@ -135,6 +137,26 @@ export default function InputCreator({ extension }: Props) {
         timestamp: new Date().getTime(),
       },
     ])
+  }
+
+  const generateRandomAlias = () => {
+    const generatedWord = faker.word.sample({ 
+      length: { min: 7, max: 13 }, 
+      strategy: 'closest' 
+    })
+    setRandomAlias(true)
+
+    setSelectedAlias(generatedWord)
+  }
+
+  const clearRandomAlias = () => {
+    setSelectedAlias('')
+    setRandomAlias(false)
+  }
+
+  const saveRandomAlias = (generatedWord: string) => {
+    handleCreateAlias(generatedWord)
+    setRandomAlias(false)
   }
 
   return (
@@ -181,7 +203,7 @@ export default function InputCreator({ extension }: Props) {
           </Input.Wrapper>
         </Grid.Col>
 
-        <Grid.Col span={extension ? 12 : 4}>
+        <Grid.Col span={extension ? 9 : 4}>
           <Box p={rem(10)}>
             Customize Aliases
             {aliases.length > 0 ? (
@@ -244,12 +266,14 @@ export default function InputCreator({ extension }: Props) {
                 creatable
                 onChange={(value) => {
                   setSelectedAlias(value as string)
+                  setRandomAlias(false)
                 }}
                 getCreateLabel={(query) =>
                   `Use "${query.trim().replaceAll(/\W/g, "")}" as alias`
                 }
                 onCreate={(query) => {
                   handleCreateAlias(query)
+                  setRandomAlias(false)
                   return query.trim().replaceAll(/\W/g, "")
                 }}
                 onKeyDown={(e) => {
@@ -266,17 +290,42 @@ export default function InputCreator({ extension }: Props) {
             )}
           </Box>
         </Grid.Col>
-        
-        <Grid.Col span={6}>
-          <Box>
-            <Switch
-              label='Timestamp'
-              labelPosition='left'
-              checked={timestampEnabled}
-              onChange={(event) => setTimestampEnabled(event.currentTarget.checked)}
-            />
+        {extension ? 
+          <></> 
+          : 
+          <Grid.Col span={4}>
+          </Grid.Col>
+        }
+        <Grid.Col span={3} >
+          <Box pt={extension ? rem(10) : '0'} mt={-10}>
+              Timestamp
+              <Switch
+                pt={extension ? rem(10) : 'auto'}
+                ml={20}
+                checked={timestampEnabled}
+                onChange={(event) => setTimestampEnabled(event.currentTarget.checked)}
+              />
           </Box>
         </Grid.Col>
+        <Grid.Col span={extension ? 12 : 5} mb={extension ? 7 : 0}  >
+          <Button.Group w={'fullWidth'} style={{float: 'right'}} h={extension ? 20 : '50'}>
+            {randomAlias &&
+              (
+                <>
+                  <Button color="red" w={50} p={0} onClick={() => clearRandomAlias()} h={extension ? 20 : '50'}>
+                    Clear
+                  </Button>
+                  <Button color="green" w={50} p={0} onClick={() => saveRandomAlias(selectedAlias)} h={extension ? 20 : '50'}>
+                    Save
+                  </Button>
+                </>
+            )}
+            <Button onClick={() => generateRandomAlias()} h={extension ? 20 : '50'} >
+              Random Alias
+            </Button>
+          </Button.Group>
+        </Grid.Col>
+
 
         <Grid.Col span={12} onClick={handleCopyEmail}>
           <CopyButton value={aliasedEmail}>

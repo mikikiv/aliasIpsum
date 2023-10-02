@@ -16,16 +16,18 @@ import {
   Title,
 } from "@mantine/core"
 import { useHotkeys, useLocalStorage } from "@mantine/hooks"
-import Logo from "../components/logo"
-import ColorSwitcher from "../components/ColorSwitcher"
+import Logo from "../components/global/logo"
+import ColorSwitcher from "../components/global/ColorSwitcher"
 import Link from "next/link"
 import { IconBrandGithub } from "@tabler/icons-react"
 import HomepageHero from "../components/HomepageHero"
 import { useRouter } from "next/router"
 import { Provider as JotaiProvider, useAtom } from "jotai"
-import CopyHistory, { localCopyHistoryAtom } from "@/components/CopyHistory"
-import ConfirmationPopup from "@/components/ConfirmationPopup"
-import { RESET, atomWithStorage } from "jotai/utils"
+import CopyHistory, {
+  localCopyHistoryAtom,
+} from "@/components/global/CopyHistory"
+import ConfirmationPopup from "@/components/global/ConfirmationPopup"
+import { RESET } from "jotai/utils"
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props

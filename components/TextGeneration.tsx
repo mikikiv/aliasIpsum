@@ -13,7 +13,7 @@ import {
 import React, { useState } from "react"
 import { PlaceText } from "../utils/transformer"
 import { useAtom } from "jotai"
-import { localCopyHistoryAtom } from "./CopyHistory"
+import { localCopyHistoryAtom } from "./global/CopyHistory"
 import { colorSelector } from "@/utils/colorSelector"
 
 interface Props {

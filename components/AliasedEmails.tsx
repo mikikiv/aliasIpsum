@@ -2,12 +2,13 @@ import {
   Box,
   Button,
   Card,
+  Chip,
   CopyButton,
+  Flex,
   Grid,
   Input,
+  Paper,
   Select,
-  SimpleGrid,
-  Switch,
   Text,
   Tooltip,
   rem,
@@ -25,7 +26,7 @@ import {
 import { useEffect, useState } from "react"
 import { useAtom } from "jotai"
 import { colorSelector } from "@/utils/colorSelector"
-import { localCopyHistoryAtom } from "./CopyHistory"
+import { localCopyHistoryAtom } from "./global/CopyHistory"
 
 type Props = { extension?: boolean }
 type Alias = {
@@ -43,11 +44,10 @@ export default function InputCreator({ extension }: Props) {
     key: "selectedAlias",
     defaultValue: "",
   })
-  const [aliasedEmail, setAliasedEmail] = useState("")
+  const [finalEmail, setFinalEmail] = useState("")
   const [realtimeTimestamp, setRealtimeTimestamp] = useState("")
   const [copiedEmail, setCopiedEmail] = useState("")
   const [timestampEnabled, setTimestampEnabled] = useState(true)
-  const [randomAlias, setRandomAlias] = useState(false)
 
   const timestamp = new Date().getTime()
 
@@ -70,19 +70,20 @@ export default function InputCreator({ extension }: Props) {
 
   const addAliasToEmail = (email: string, alias: string) => {
     if (!email) return ""
-    return email.split("@").join(alias ? '+' + alias + '@' : '' + '@')
+    return email.split("@").join(alias ? "+" + alias + "@" : "" + "@")
   }
 
   useEffect(() => {
     //every time the selected alias changes, update the aliased email
-    setAliasedEmail(
-      timestampEnabled ?
-        addAliasToEmail(
-          email,
-          selectedAlias
-            ? `${selectedAlias}-${realtimeTimestamp}`
-            : realtimeTimestamp
-        ) : addAliasToEmail(email, selectedAlias)
+    setFinalEmail(
+      timestampEnabled
+        ? addAliasToEmail(
+            email,
+            selectedAlias
+              ? `${selectedAlias}-${realtimeTimestamp}`
+              : realtimeTimestamp
+          )
+        : addAliasToEmail(email, selectedAlias)
     )
   }, [email, selectedAlias, realtimeTimestamp])
 
@@ -93,7 +94,7 @@ export default function InputCreator({ extension }: Props) {
 
   const handleChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value)
-    setAliasedEmail(
+    setFinalEmail(
       addAliasToEmail(
         e.target.value,
         selectedAlias || new Date(timestamp).getTime().toString()
@@ -109,7 +110,6 @@ export default function InputCreator({ extension }: Props) {
       ...aliases,
       { label: query, value: query.trim().replaceAll(/\W/g, "") },
     ])
-    setRandomAlias(false)
   }
   const [editingAliases, setEditingAliases] = useState(false)
 
@@ -125,38 +125,28 @@ export default function InputCreator({ extension }: Props) {
   const [copyHistory, setCopyHistory] = useAtom(localCopyHistoryAtom)
 
   const handleCopyEmail = () => {
-    setCopiedEmail(aliasedEmail)
+    setCopiedEmail(finalEmail)
 
-    if (copyHistory.find((item) => item.value === aliasedEmail)) return
+    if (copyHistory.find((item) => item.value === finalEmail)) return
     setCopyHistory((history) => [
       ...history,
       {
         id: history.length,
         type: "email",
-        value: aliasedEmail,
+        value: finalEmail,
         timestamp: new Date().getTime(),
       },
     ])
   }
 
   const generateRandomAlias = () => {
-    const generatedWord = faker.word.sample({ 
-      length: { min: 7, max: 13 }, 
-      strategy: 'closest' 
+    const generatedWord = faker.word.sample({
+      length: { min: 7, max: 13 },
+      strategy: "closest",
     })
-    setRandomAlias(true)
 
-    setSelectedAlias(generatedWord)
-  }
-
-  const clearRandomAlias = () => {
-    setSelectedAlias('')
-    setRandomAlias(false)
-  }
-
-  const saveRandomAlias = (generatedWord: string) => {
     handleCreateAlias(generatedWord)
-    setRandomAlias(false)
+    setSelectedAlias(generatedWord)
   }
 
   return (
@@ -170,7 +160,7 @@ export default function InputCreator({ extension }: Props) {
         <Grid.Col span={12}>
           <Text> Aliased Emails</Text>
         </Grid.Col>
-        <Grid.Col span={extension ? 12 : 8}>
+        <Grid.Col span={12} data-name={"emailInput"}>
           <Input.Wrapper
             description={
               "Aliased emails are a way to create additional email addresses that forward incoming messages to your primary email account. "
@@ -202,133 +192,148 @@ export default function InputCreator({ extension }: Props) {
             />
           </Input.Wrapper>
         </Grid.Col>
-
-        <Grid.Col span={extension ? 9 : 4}>
-          <Box p={rem(10)}>
-            Customize Aliases
-            {aliases.length > 0 ? (
-              !editingAliases ? (
-                <IconSettings
-                  size="1rem"
-                  style={{
-                    opacity: 0.5,
-                    float: "right",
-                    marginRight: 6,
-                    cursor: "pointer",
-                  }}
-                  onClick={() => {
-                    setEditingAliases(!editingAliases)
-                  }}
-                />
+        <Grid.Col span={5} my={"xs"}>
+          <Button
+            fullWidth
+            size={extension ? "xs" : "sm"}
+            variant="gradient"
+            gradient={{ from: "grape", to: "cyan", deg: 145 }}
+            onClick={() => generateRandomAlias()}
+          >
+            Random Alias
+          </Button>
+        </Grid.Col>
+        <Grid.Col span={2}></Grid.Col>
+        <Grid.Col span={5} my={"xs"}>
+          <Button
+            fullWidth
+            size={extension ? "xs" : "sm"}
+            onClick={() => {
+              setEditingAliases(!editingAliases)
+            }}
+            rightIcon={
+              editingAliases ? (
+                <IconSettings size="1rem" />
               ) : (
-                <IconSettingsCancel
-                  size="1rem"
-                  style={{
-                    opacity: 0.5,
-                    float: "right",
-                    marginRight: 6,
-                    cursor: "pointer",
-                  }}
-                  onClick={() => {
-                    setEditingAliases(!editingAliases)
-                  }}
-                />
+                <IconSettingsCancel size="1rem" />
               )
-            ) : null}
-            {editingAliases ? (
-              <SimpleGrid cols={1} spacing={5}>
-                {aliases.map((alias) => (
-                  <Button
-                    fullWidth
-                    color={"red"}
-                    rightIcon={
-                      <IconX
-                        size="1rem"
-                        style={{ right: 6, position: "absolute" }}
-                        onClick={() => handleDeleteAlias(alias.value)}
-                      />
-                    }
-                    key={alias.value}
-                  >
-                    {alias.value}
-                  </Button>
-                ))}
-              </SimpleGrid>
-            ) : (
-              <Select
-                clearable
-                allowDeselect
-                withinPortal
-                placeholder="Timestamp"
-                value={selectedAlias}
-                data={aliases}
-                searchable
-                creatable
-                onChange={(value) => {
-                  setSelectedAlias(value as string)
-                  setRandomAlias(false)
-                }}
-                getCreateLabel={(query) =>
-                  `Use "${query.trim().replaceAll(/\W/g, "")}" as alias`
-                }
-                onCreate={(query) => {
-                  handleCreateAlias(query)
-                  setRandomAlias(false)
-                  return query.trim().replaceAll(/\W/g, "")
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault()
-                    handleCreateAlias(e.currentTarget.value)
-                    setSelectedAlias(
-                      e.currentTarget.value.trim().replaceAll(/\W/g, "")
-                    )
-                    e.currentTarget.value = ""
+            }
+            disabled={aliases.length === 0}
+          >
+            {editingAliases ? "Exit Editing" : "Edit Aliases"}
+          </Button>
+        </Grid.Col>
+        {editingAliases ? (
+          <>
+            <Grid.Col span={12}>
+              {aliases.map((alias) => (
+                <Button
+                  size={extension ? "xs" : "sm"}
+                  style={{
+                    float: "right",
+                  }}
+                  fullWidth
+                  color={"red"}
+                  rightIcon={
+                    <IconX
+                      size="1rem"
+                      style={{ right: 6, position: "absolute" }}
+                      onClick={() => handleDeleteAlias(alias.value)}
+                    />
                   }
-                }}
-              />
-            )}
-          </Box>
-        </Grid.Col>
-        {extension ? 
-          <></> 
-          : 
-          <Grid.Col span={4}>
-          </Grid.Col>
-        }
-        <Grid.Col span={3} >
-          <Box pt={extension ? rem(10) : '0'} mt={-10}>
-              Timestamp
-              <Switch
-                pt={extension ? rem(10) : 'auto'}
-                ml={20}
-                checked={timestampEnabled}
-                onChange={(event) => setTimestampEnabled(event.currentTarget.checked)}
-              />
-          </Box>
-        </Grid.Col>
-        <Grid.Col span={extension ? 12 : 5} mb={extension ? 7 : 0}  >
-          <Button.Group w={'fullWidth'} style={{float: 'right'}} h={extension ? 20 : '50'}>
-            {randomAlias &&
-              (
-                <>
-                  <Button color="red" w={50} p={0} onClick={() => clearRandomAlias()} h={extension ? 20 : '50'}>
-                    Clear
-                  </Button>
-                  <Button color="green" w={50} p={0} onClick={() => saveRandomAlias(selectedAlias)} h={extension ? 20 : '50'}>
-                    Save
-                  </Button>
-                </>
-            )}
-            <Button onClick={() => generateRandomAlias()} h={extension ? 20 : '50'} >
-              Random Alias
-            </Button>
-          </Button.Group>
-        </Grid.Col>
-
+                  key={alias.value}
+                >
+                  {alias.value}
+                </Button>
+              ))}
+            </Grid.Col>
+          </>
+        ) : (
+          <>
+            <Grid.Col span={12} className={"emailEditor"} pb={4}>
+              <Paper radius={"xl"}>
+                <Flex
+                  py={rem(8)}
+                  align={"center"}
+                  justify={"center"}
+                  wrap={"nowrap"}
+                >
+                  <Box>
+                    <Text lineClamp={1} size={extension ? "xs" : "sm"}>
+                      {email.indexOf("@") === -1
+                        ? email.slice(0, email.length)
+                        : email.slice(0, email.indexOf("@")) + "+"}
+                    </Text>
+                  </Box>
+                  <Box px={rem(4)}>
+                    <Select
+                      size={extension ? "xs" : "sm"}
+                      w={extension ? rem(100) : rem(160)}
+                      clearable
+                      allowDeselect
+                      withinPortal
+                      placeholder="none"
+                      value={selectedAlias}
+                      data={aliases}
+                      searchable
+                      creatable
+                      onChange={(value) => {
+                        setSelectedAlias(value as string)
+                      }}
+                      getCreateLabel={(query) =>
+                        `Use "${query.trim().replaceAll(/\W/g, "")}" as alias`
+                      }
+                      onCreate={(query) => {
+                        handleCreateAlias(query)
+                        return query.trim().replaceAll(/\W/g, "")
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault()
+                          handleCreateAlias(e.currentTarget.value)
+                          setSelectedAlias(
+                            e.currentTarget.value.trim().replaceAll(/\W/g, "")
+                          )
+                          e.currentTarget.value = ""
+                        }
+                      }}
+                    />
+                  </Box>
+                  {selectedAlias && timestampEnabled && "-"}
+                  <Box px={extension ? rem(1) : rem(6)}>
+                    <Chip
+                      variant="light"
+                      checked={timestampEnabled}
+                      size={extension ? "xs" : "sm"}
+                      onClick={() => setTimestampEnabled(!timestampEnabled)}
+                      color="green"
+                      radius={"sm"}
+                    >
+                      {timestampEnabled ? (
+                        "Time"
+                      ) : (
+                        <Text td="line-through"> Time</Text>
+                      )}
+                    </Chip>
+                  </Box>
+                  <Box>
+                    <Text
+                      ta={"right"}
+                      size={extension ? "xs" : "sm"}
+                      lineClamp={1}
+                    >
+                      {email.indexOf("@") > -1 &&
+                        email.slice(email.indexOf("@"))}
+                    </Text>
+                  </Box>
+                </Flex>
+              </Paper>
+            </Grid.Col>
+          </>
+        )}
 
         <Grid.Col span={12} onClick={handleCopyEmail}>
-          <CopyButton value={aliasedEmail}>
+          <CopyButton value={finalEmail}>
             {({ copied, copy }) => (
               <>
                 <Button
@@ -341,7 +346,7 @@ export default function InputCreator({ extension }: Props) {
                   disabled={!validateEmail(email) || email.length === 0}
                   color={colorSelector("email")}
                 >
-                  {copied ? `Copied ${copiedEmail}` : `${aliasedEmail}`}
+                  {copied ? `Copied ${copiedEmail}` : `${finalEmail}`}
                 </Button>
               </>
             )}

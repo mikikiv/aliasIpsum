@@ -66,7 +66,7 @@ export default function InputCreator({ extension }: Props) {
     updateTimestamp()
     const interval = setInterval(updateTimestamp, 1000)
     return () => clearInterval(interval)
-  }, [])
+  }, [timestampEnabled])
 
   const addAliasToEmail = (email: string, alias: string) => {
     if (!email) return ""
@@ -85,7 +85,7 @@ export default function InputCreator({ extension }: Props) {
           )
         : addAliasToEmail(email, selectedAlias)
     )
-  }, [email, selectedAlias, realtimeTimestamp])
+  }, [email, selectedAlias, realtimeTimestamp, timestampEnabled])
 
   const validateEmail = (email: string) => {
     const re = /\S+@\S+\.\S+/

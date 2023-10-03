@@ -152,13 +152,13 @@ export default function InputCreator({ extension }: Props) {
   return (
     <Card
       shadow="sm"
-      padding={extension ? "xs" : "md"}
+      padding={extension ? "xs" : "lg"}
       radius="md"
       maw={extension ? "380px" : "100%"}
     >
-      <Grid gutter={extension ? 0 : "md"}>
+      <Grid gutter={extension ? 0 : "xs"}>
         <Grid.Col span={12}>
-          <Text> Aliased Emails</Text>
+          <Text mx={8}> Aliased Emails</Text>
         </Grid.Col>
         <Grid.Col span={12} data-name={"emailInput"}>
           <Input.Wrapper
@@ -194,6 +194,7 @@ export default function InputCreator({ extension }: Props) {
         </Grid.Col>
         <Grid.Col span={5} my={"xs"}>
           <Button
+            mx={4}
             fullWidth
             size={extension ? "xs" : "sm"}
             variant="gradient"
@@ -211,6 +212,8 @@ export default function InputCreator({ extension }: Props) {
             onClick={() => {
               setEditingAliases(!editingAliases)
             }}
+            variant={editingAliases ? "outline" : "subtle"}
+            color="red"
             rightIcon={
               editingAliases ? (
                 <IconSettings size="1rem" />
@@ -224,21 +227,20 @@ export default function InputCreator({ extension }: Props) {
           </Button>
         </Grid.Col>
         {editingAliases ? (
-          <>
-            <Grid.Col span={12}>
+          <Grid.Col span={12} mb={"xs"}>
+            <Flex justify={"right"} wrap={"wrap"} gap={8}>
               {aliases.map((alias) => (
                 <Button
                   size={extension ? "xs" : "sm"}
                   style={{
                     float: "right",
                   }}
-                  fullWidth
                   color={"red"}
+                  onClick={() => handleDeleteAlias(alias.value)}
                   rightIcon={
                     <IconX
                       size="1rem"
                       style={{ right: 6, position: "absolute" }}
-                      onClick={() => handleDeleteAlias(alias.value)}
                     />
                   }
                   key={alias.value}
@@ -246,90 +248,87 @@ export default function InputCreator({ extension }: Props) {
                   {alias.value}
                 </Button>
               ))}
-            </Grid.Col>
-          </>
+            </Flex>
+          </Grid.Col>
         ) : (
-          <>
-            <Grid.Col span={12} className={"emailEditor"} pb={4}>
-              <Paper radius={"xl"}>
-                <Flex
-                  py={rem(8)}
-                  align={"center"}
-                  justify={"center"}
-                  wrap={"nowrap"}
-                >
-                  <Box>
-                    <Text lineClamp={1} size={extension ? "xs" : "sm"}>
-                      {email.indexOf("@") === -1
-                        ? email.slice(0, email.length)
-                        : email.slice(0, email.indexOf("@")) + "+"}
-                    </Text>
-                  </Box>
-                  <Box px={rem(4)}>
-                    <Select
-                      size={extension ? "xs" : "sm"}
-                      w={extension ? rem(100) : rem(160)}
-                      clearable
-                      allowDeselect
-                      withinPortal
-                      placeholder="none"
-                      value={selectedAlias}
-                      data={aliases}
-                      searchable
-                      creatable
-                      onChange={(value) => {
-                        setSelectedAlias(value as string)
-                      }}
-                      getCreateLabel={(query) =>
-                        `Use "${query.trim().replaceAll(/\W/g, "")}" as alias`
+          <Grid.Col span={12} className={"emailEditor"} mb={"xs"}>
+            <Paper radius={"md"} shadow={"md"}>
+              <Flex
+                py={rem(8)}
+                align={"center"}
+                justify={"center"}
+                wrap={"nowrap"}
+              >
+                <Box>
+                  <Text lineClamp={1} size={extension ? "xs" : "sm"}>
+                    {email.indexOf("@") === -1
+                      ? email.slice(0, email.length)
+                      : email.slice(0, email.indexOf("@")) + "+"}
+                  </Text>
+                </Box>
+                <Box px={rem(4)}>
+                  <Select
+                    size={extension ? "xs" : "sm"}
+                    w={extension ? rem(110) : rem(160)}
+                    clearable
+                    allowDeselect
+                    withinPortal
+                    placeholder="none"
+                    value={selectedAlias}
+                    data={aliases}
+                    searchable
+                    creatable
+                    onChange={(value) => {
+                      setSelectedAlias(value as string)
+                    }}
+                    getCreateLabel={(query) =>
+                      `Use "${query.trim().replaceAll(/\W/g, "")}" as alias`
+                    }
+                    onCreate={(query) => {
+                      handleCreateAlias(query)
+                      return query.trim().replaceAll(/\W/g, "")
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault()
+                        handleCreateAlias(e.currentTarget.value)
+                        setSelectedAlias(
+                          e.currentTarget.value.trim().replaceAll(/\W/g, "")
+                        )
+                        e.currentTarget.value = ""
                       }
-                      onCreate={(query) => {
-                        handleCreateAlias(query)
-                        return query.trim().replaceAll(/\W/g, "")
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault()
-                          handleCreateAlias(e.currentTarget.value)
-                          setSelectedAlias(
-                            e.currentTarget.value.trim().replaceAll(/\W/g, "")
-                          )
-                          e.currentTarget.value = ""
-                        }
-                      }}
-                    />
-                  </Box>
-                  {selectedAlias && timestampEnabled && "-"}
-                  <Box px={extension ? rem(1) : rem(6)}>
-                    <Chip
-                      variant="light"
-                      checked={timestampEnabled}
-                      size={extension ? "xs" : "sm"}
-                      onClick={() => setTimestampEnabled(!timestampEnabled)}
-                      color="green"
-                      radius={"sm"}
-                    >
-                      {timestampEnabled ? (
-                        "Time"
-                      ) : (
-                        <Text td="line-through"> Time</Text>
-                      )}
-                    </Chip>
-                  </Box>
-                  <Box>
-                    <Text
-                      ta={"right"}
-                      size={extension ? "xs" : "sm"}
-                      lineClamp={1}
-                    >
-                      {email.indexOf("@") > -1 &&
-                        email.slice(email.indexOf("@"))}
-                    </Text>
-                  </Box>
-                </Flex>
-              </Paper>
-            </Grid.Col>
-          </>
+                    }}
+                  />
+                </Box>
+                {selectedAlias && timestampEnabled && "-"}
+                <Box px={extension ? rem(1) : rem(6)}>
+                  <Chip
+                    variant="light"
+                    checked={timestampEnabled}
+                    size={extension ? "xs" : "sm"}
+                    onClick={() => setTimestampEnabled(!timestampEnabled)}
+                    color="green"
+                    radius={"sm"}
+                  >
+                    {timestampEnabled ? (
+                      "Time"
+                    ) : (
+                      <Text td="line-through"> Time</Text>
+                    )}
+                  </Chip>
+                </Box>
+                <Box>
+                  <Text
+                    ta={"right"}
+                    size={extension ? "xs" : "sm"}
+                    lineClamp={1}
+                  >
+                    {email.indexOf("@") > -1 && email.slice(email.indexOf("@"))}
+                  </Text>
+                </Box>
+              </Flex>
+            </Paper>
+          </Grid.Col>
         )}
 
         <Grid.Col span={12} onClick={handleCopyEmail}>
@@ -338,7 +337,8 @@ export default function InputCreator({ extension }: Props) {
               <>
                 <Button
                   size={extension ? "xs" : "md"}
-                  h={100}
+                  h={80}
+                  maw={extension ? "330px" : "100%"}
                   fullWidth
                   variant={copied ? "light" : "outline"}
                   onClick={copy}

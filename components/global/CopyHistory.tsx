@@ -14,6 +14,7 @@ import {
 } from "@mantine/core"
 import { IconCopy } from "@tabler/icons-react"
 import { colorSelector } from "@/utils/colorSelector"
+import { useRouter } from "next/router"
 
 type Props = {
   type?: "email" | "text"
@@ -40,6 +41,9 @@ export const localCopyHistoryAtom = atomWithStorage(
 
 export default function CopyHistory({ type, tooltip, scrollThreshold }: Props) {
   let copyHistory = useAtomValue(localCopyHistoryAtom)
+
+  const router = useRouter()
+  const extension = router.pathname.includes("/extension")
 
   type == "email" &&
     (copyHistory = copyHistory.filter((item) => item.type === type))
@@ -132,6 +136,7 @@ export default function CopyHistory({ type, tooltip, scrollThreshold }: Props) {
               color={colorSelector(historyItem.type)}
               variant={copied ? "filled" : "outline"}
               onClick={copy}
+              size={extension ? "xs" : "sm"}
             >
               <ScrollingText
                 scrollThreshold={scrollThreshold}

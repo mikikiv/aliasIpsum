@@ -216,7 +216,6 @@ export default function CopyHistory({ type, tooltip, scrollThreshold }: Props) {
       {dateKeys
         .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
         .map((dates) => {
-          console.log(dates)
           return (
             <Box key={"info-" + dates}>
               <Flex justify={"space-between"} pt={8} pb={4}>

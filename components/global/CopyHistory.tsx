@@ -132,6 +132,7 @@ export default function CopyHistory({ type, tooltip, scrollThreshold }: Props) {
             position={"bottom"}
           >
             <Button
+              data-cy={historyItem.value}
               leftIcon={<IconCopy />}
               color={colorSelector(historyItem.type)}
               variant={copied ? "filled" : "outline"}

@@ -170,6 +170,7 @@ export default function InputCreator({ extension }: Props) {
             }
           >
             <Input
+              type="email"
               icon={<IconMail size="1rem" />}
               radius={"xl"}
               placeholder="email@example.com"
@@ -268,6 +269,7 @@ export default function InputCreator({ extension }: Props) {
                 </Box>
                 <Box px={rem(4)}>
                   <Select
+                    type="alias"
                     size={extension ? "xs" : "sm"}
                     w={extension ? rem(110) : rem(160)}
                     clearable
@@ -303,6 +305,7 @@ export default function InputCreator({ extension }: Props) {
                 {selectedAlias && timestampEnabled && "-"}
                 <Box px={extension ? rem(1) : rem(6)}>
                   <Chip
+                    data-cy={"timestampEnabled"}
                     variant="light"
                     checked={timestampEnabled}
                     size={extension ? "xs" : "sm"}
@@ -336,6 +339,7 @@ export default function InputCreator({ extension }: Props) {
             {({ copied, copy }) => (
               <>
                 <Button
+                  id="copyEmail"
                   size={extension ? "xs" : "md"}
                   h={80}
                   maw={extension ? "330px" : "100%"}

@@ -1,8 +1,8 @@
-describe("template spec", () => {
+describe("aliased emails", () => {
   const email = "idxqamv@gmail.com"
   const aliasedEmail = "idxqamv+SugarFire@gmail.com"
 
-  it("passes", () => {
+  it("stores expected data", () => {
     cy.visit("/")
     cy.get('input[type="email"]').type(email)
     cy.get('input[type="alias"]').type("Sugar Fire{enter}")
@@ -14,7 +14,8 @@ describe("template spec", () => {
         "email",
         "aliases",
         "copyHistory",
-        "selectedAlias"
+        "selectedAlias",
+        "timestampEnabled"
       )
     })
     cy.get(`[data-cy="${aliasedEmail}"]`).should("exist")

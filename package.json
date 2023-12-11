@@ -24,6 +24,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "test": "cypress run",
     "vercel-build": "next build",
     "build:extension": "extensionReqs/build.sh"
   },

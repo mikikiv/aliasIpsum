@@ -27,18 +27,15 @@ import { useEffect, useState } from "react"
 import { useAtom } from "jotai"
 import { colorSelector } from "@/utils/colorSelector"
 import { localCopyHistoryAtom } from "./global/CopyHistory"
+import { AliasType } from "@/components/types"
 
 type Props = { extension?: boolean }
-type Alias = {
-  label: string
-  value: string
-}
 
 export default function InputCreator({ extension }: Props) {
   const [email, setEmail] = useLocalStorage({ key: "email", defaultValue: "" })
   const [aliases, setAliases] = useLocalStorage({
     key: "aliases",
-    defaultValue: [] as Alias[],
+    defaultValue: [] as AliasType[],
   })
   const [selectedAlias, setSelectedAlias] = useLocalStorage({
     key: "selectedAlias",

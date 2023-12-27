@@ -24,7 +24,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "cypress run",
+    "test": "playwright test",
     "vercel-build": "next build",
     "build:extension": "extensionReqs/build.sh"
   },
@@ -50,6 +50,7 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^8.1.0",
+    "@playwright/test": "^1.40.1",
     "@swc-jotai/react-refresh": "^0.0.8",
     "cypress": "^13.6.0"
   }

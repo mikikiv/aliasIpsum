@@ -25,6 +25,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "playwright test",
+    "test-dev": "playwright test --ui",
     "vercel-build": "next build",
     "build:extension": "extensionReqs/build.sh"
   },

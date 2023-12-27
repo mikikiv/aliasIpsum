@@ -15,14 +15,15 @@ test.describe("aliased emails", () => {
     expect(await page.textContent("#copyEmail")).toEqual(aliasedEmail)
     await page.click("#copyEmail")
     const savedLocalStorage = (await page.context().storageState()).origins[0]
+    expect(savedLocalStorage.localStorage.length).toBe(5)
     const expectedStorage: TotalLocalStorage = [
       {
         name: "selectedAlias",
-        value: '"SugarFire"',
+        value: "SugarFire",
       },
       {
         name: "email",
-        value: `"${email}"`,
+        value: email,
       },
       {
         name: "copyHistory",
@@ -34,35 +35,37 @@ test.describe("aliased emails", () => {
       },
       {
         name: "timestampEnabled",
-        value: "false",
+        value: false,
       },
     ]
 
-    for (let index = 0; index < expectedStorage.length; index++) {
-      if (expectedStorage[index].name === "copyHistory") {
+    const expectedStorageMap = Object.fromEntries(
+      expectedStorage.map((item) => [item.name, item.value])
+    )
+    const savedLocalStorageMap = Object.fromEntries(
+      savedLocalStorage.localStorage.map((item) => [
+        item.name,
+        JSON.parse(item.value),
+      ])
+    )
+
+    for (const key in expectedStorageMap) {
+      if (key === "copyHistory") {
         //@ts-ignore
-        const expectedCopyHistory: CopyHistoryType =
-          expectedStorage[index].value
-        const storedCopyHistory: CopyHistoryType = JSON.parse(
-          savedLocalStorage.localStorage[index].value
-        )
-        expect(storedCopyHistory.type).toBe(expectedCopyHistory.type)
-        expect(storedCopyHistory.id).toBe(expectedCopyHistory.id)
-        expect(storedCopyHistory.timestamp).not.toBeNaN()
-      } else if (expectedStorage[index].name === "aliases") {
+        const expectedCopyHistory: CopyHistoryType = expectedStorageMap[key]
+        const storedCopyHistory: CopyHistoryType = savedLocalStorageMap[key]
+        expect(storedCopyHistory).toMatchObject(expectedCopyHistory)
+      } else if (key === "aliases") {
         //@ts-ignore
-        const expectedAliases: AliasType[] = expectedStorage[index].value
-        const storedAliases: AliasType[] = JSON.parse(
-          savedLocalStorage.localStorage[index].value
-        )
+        const expectedAliases: AliasType[] = expectedStorageMap[key]
+        const storedAliases: AliasType[] = savedLocalStorageMap[key]
         expect(storedAliases).toMatchObject(expectedAliases)
       } else {
-        expect(JSON.stringify(savedLocalStorage.localStorage[index])).toMatch(
-          JSON.stringify(expectedStorage[index])
+        expect(JSON.stringify(savedLocalStorageMap[key])).toMatch(
+          JSON.stringify(expectedStorageMap[key])
         )
       }
     }
-
     await expect(page.getByTestId(aliasedEmail)).toBeVisible()
   })
 })

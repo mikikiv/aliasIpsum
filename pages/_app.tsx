@@ -8,11 +8,9 @@ import {
   ColorSchemeScript,
   Group,
   MantineProvider,
-  MantineThemeProvider,
   ScrollArea,
   Title,
-  localStorageColorSchemeManager,
-  useMantineColorScheme,
+  useComputedColorScheme,
 } from "@mantine/core"
 import Logo from "../components/global/logo"
 import ColorSwitcher from "../components/global/ColorSwitcher"
@@ -29,43 +27,36 @@ import { RESET } from "jotai/utils"
 import { theme } from "@/theme"
 
 export default function App({ Component, pageProps }: AppProps) {
-  const colorSchemeManager = localStorageColorSchemeManager({
-    key: "my-app-color-scheme",
-  })
-
-  // const { colorScheme, toggleColorScheme } = useMantineColorScheme()
-
   // if the route contains 'extension' then use the extension layout
   // otherwise use the default layout
   const router = useRouter()
   const isExtension = router.pathname.includes("/extension")
-
+  
   const Layout = isExtension ? ExtentionLayout : DefaultLayout
 
-  // useHotkeys([["mod+J", () => toggleColorScheme()]])
-
   return (
-    <MantineProvider theme={theme}>
-      <Head>
-        <title>QuickLorem.dev</title>
+    <>
+      <ColorSchemeScript />
+      <MantineProvider theme={theme} defaultColorScheme="dark" >
+        <Head>
+          <title>QuickLorem.dev</title>
+          <meta
+            name="viewport"
+            content="minimum-scale=1, initial-scale=1, width=device-width"
+            />
         <meta
           name="viewport"
-          content="minimum-scale=1, initial-scale=1, width=device-width"
-        />
-      </Head>
-      <meta
-        name="viewport"
-        content="minimum-scale=1, initial-scale=1, width=device-width, user-scalable=no"
-      />
-
-      <ColorSchemeScript defaultColorScheme="dark" />
-      <JotaiProvider>
-        <Layout>
-          <Analytics />
-          <Component {...pageProps} />
-        </Layout>
-      </JotaiProvider>
-    </MantineProvider>
+          content="minimum-scale=1, initial-scale=1, width=device-width, user-scalable=no"
+          />
+        </Head>
+        <JotaiProvider>
+          <Layout >
+            <Analytics />
+            <Component {...pageProps} />
+          </Layout>
+        </JotaiProvider>
+      </MantineProvider>
+    </>
   )
 }
 
@@ -91,12 +82,9 @@ const ClearHistoryButton = () => {
 }
 
 function ExtentionLayout({
-  // colorScheme,
   children,
   ...rest
 }: {
-  colorScheme?: string
-
   children: React.ReactNode
   [x: string]: any
 }) {
@@ -132,14 +120,15 @@ function ExtentionLayout({
 }
 
 function DefaultLayout({
-  // colorScheme,
   children,
   ...rest
 }: {
-  colorScheme?: string
   children: React.ReactNode
   [x: string]: any
-}) {
+  }) {
+  
+  const computedColorScheme = useComputedColorScheme('dark')
+  
   return (
     <AppShell
       padding="md"
@@ -164,7 +153,7 @@ function DefaultLayout({
             }}
           >
             <Group>
-              {/* <Logo fill={colorScheme === "dark" ? "#C1C2C5" : "inherit"} /> */}
+              <Logo fill={computedColorScheme === "dark" ? "#C1C2C5" : "inherit"} />
               <HomepageHero display={{ base: "none", xs: "block" }} />
               <Title display={{ base: "block", xs: "none" }} size={"sm"}>
                 QuickLorem.dev

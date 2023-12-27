@@ -15,6 +15,7 @@ import {
 import { IconCopy } from "@tabler/icons-react"
 import { colorSelector } from "@/utils/colorSelector"
 import { useRouter } from "next/router"
+import { CopyHistoryType } from "@/components/types"
 
 type Props = {
   type?: "email" | "text"
@@ -23,20 +24,9 @@ type Props = {
   scrollThreshold: number
 }
 
-export type CopyHistory = {
-  id: number
-  type: string
-  value: string
-  timestamp?: number
-}
-
-interface GroupedCopyHistory {
-  [dateKey: number]: CopyHistory[]
-}
-
 export const localCopyHistoryAtom = atomWithStorage(
   "copyHistory",
-  [] as CopyHistory[]
+  [] as CopyHistoryType[]
 )
 
 export default function CopyHistory({ type, tooltip, scrollThreshold }: Props) {
@@ -115,7 +105,7 @@ export default function CopyHistory({ type, tooltip, scrollThreshold }: Props) {
     historyItem,
     ...rest
   }: {
-    historyItem: CopyHistory
+    historyItem: CopyHistoryType
   }) => {
     return (
       <CopyButton value={historyItem.value} timeout={5000}>
@@ -176,8 +166,8 @@ export default function CopyHistory({ type, tooltip, scrollThreshold }: Props) {
     }
   }
 
-  const groupedData: { [key: string]: CopyHistory[] } = copyHistory.reduce(
-    (acc: { [key: string]: CopyHistory[] }, item) => {
+  const groupedData: { [key: string]: CopyHistoryType[] } = copyHistory.reduce(
+    (acc: { [key: string]: CopyHistoryType[] }, item) => {
       let itemTimestamp = item.timestamp
       if (itemTimestamp == undefined || itemTimestamp == null) {
         itemTimestamp = new Date(946800000000).getTime()
@@ -192,7 +182,7 @@ export default function CopyHistory({ type, tooltip, scrollThreshold }: Props) {
       }
       return groupedData
     },
-    {} as { [key: string]: CopyHistory[] }
+    {} as { [key: string]: CopyHistoryType[] }
   )
 
   const dateKeys = Object.keys(groupedData)
@@ -260,7 +250,7 @@ export default function CopyHistory({ type, tooltip, scrollThreshold }: Props) {
                 {groupedData[dates]
                   .sort()
                   .reverse()
-                  .map((historyItem: CopyHistory) => (
+                  .map((historyItem: CopyHistoryType) => (
                     <CopyHistoryItem
                       historyItem={historyItem}
                       key={historyItem.id}

@@ -57,7 +57,7 @@ export default function ConfirmationPopup({
         <Popover.Target>
           <Badge
             ref={ref}
-            sx={{ cursor: "pointer" }}
+            // sx={{ cursor: "pointer" }}
             color={hovered || opened ? "red" : "gray"}
             w={"100%"}
             onClick={() => {

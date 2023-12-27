@@ -7,7 +7,6 @@ import {
   Button,
   CopyButton,
   Flex,
-  MantineNumberSize,
   SimpleGrid,
   Text,
   Tooltip,
@@ -19,7 +18,7 @@ import { CopyHistoryType } from "@/components/types"
 
 type Props = {
   type?: "email" | "text"
-  spacing?: MantineNumberSize
+  spacing?: String
   tooltip?: boolean
   scrollThreshold: number
 }
@@ -123,7 +122,7 @@ export default function CopyHistory({ type, tooltip, scrollThreshold }: Props) {
           >
             <Button
               data-cy={historyItem.value}
-              leftIcon={<IconCopy />}
+              leftSection={<IconCopy />}
               color={colorSelector(historyItem.type)}
               variant={copied ? "filled" : "outline"}
               onClick={copy}
@@ -225,7 +224,7 @@ export default function CopyHistory({ type, tooltip, scrollThreshold }: Props) {
                     >
                       {groupedData[dates].length}
                     </Badge>
-                    <Text key={dates} size="xs" weight={700}>
+                    <Text key={dates} size="xs">
                       {dates === parseDate(new Date())
                         ? "Today, " + parseDate(new Date(dates), false)
                         : parseDate(new Date(dates), true)}

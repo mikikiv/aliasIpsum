@@ -1,3 +1,4 @@
+//@ts-nocheck
 // a react component that renders a select with a scrollable list
 // A user can use their mouse scroll wheel to scroll through the
 // options. The right side of the select should have horizontal
@@ -5,6 +6,7 @@
 
 import { Box, Select } from "@mantine/core"
 import React, { useState } from "react"
+import ts from "typescript"
 
 interface Props {
   options: string[]

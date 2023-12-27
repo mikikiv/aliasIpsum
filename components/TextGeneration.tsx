@@ -76,18 +76,18 @@ export default function CopyGroupCard({ defaultOptions }: Props) {
             defaultValue={theme}
             onChange={(value) => setTheme(value as string)}
             pb={16}
-            withinPortal
+            // withinPortal
           />
         </Grid.Col>
       </Grid>
       <SimpleGrid
-        cols={4}
+        cols={{ base: 1, md: 2, lg: 3 }}
         spacing="md"
-        breakpoints={[
-          { maxWidth: "62rem", cols: 3, spacing: "md" },
-          { maxWidth: "48rem", cols: 2, spacing: "sm" },
-          { maxWidth: "36rem", cols: 1, spacing: "sm" },
-        ]}
+        // breakpoints={[
+        //   { maxWidth: "62rem", cols: 3, spacing: "md" },
+        //   { maxWidth: "48rem", cols: 2, spacing: "sm" },
+        //   { maxWidth: "36rem", cols: 1, spacing: "sm" },
+        // ]}
       >
         {Object.keys(groupedOptions).map((textElement) => (
           <Button.Group orientation="vertical" key={textElement}>

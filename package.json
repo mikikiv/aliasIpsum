@@ -30,28 +30,29 @@
     "build:extension": "extensionReqs/build.sh"
   },
   "dependencies": {
-    "@emotion/react": "^11.10.6",
-    "@emotion/server": "^11.10.0",
-    "@mantine/core": "^6.0.8",
-    "@mantine/hooks": "^6.0.8",
-    "@mantine/next": "^6.0.8",
-    "@tabler/icons-react": "2.17.0",
-    "@types/node": "18.16.0",
-    "@types/react": "18.0.38",
-    "@types/react-dom": "18.0.11",
-    "@vercel/analytics": "^1.0.1",
+    "@emotion/react": "^11.11.3",
+    "@emotion/server": "^11.11.0",
+    "@mantine/core": "^7.3.2",
+    "@mantine/hooks": "^7.3.2",
+    "@mantine/next": "^6.0.21",
+    "@tabler/icons-react": "2.44.0",
+    "@types/node": "20.10.5",
+    "@types/react": "18.2.45",
+    "@types/react-dom": "18.2.18",
+    "@vercel/analytics": "^1.1.1",
     "analytics": "github:vercel/analytics",
-    "eslint": "8.39.0",
-    "eslint-config-next": "13.3.1",
-    "jotai": "^2.2.2",
-    "next": "13.3.1",
+    "eslint": "8.56.0",
+    "eslint-config-next": "14.0.4",
+    "jotai": "^2.6.0",
+    "next": "14.0.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "typescript": "5.0.4"
+    "typescript": "5.3.3",
+    "@next/bundle-analyzer": "^14.0.1"
   },
   "devDependencies": {
-    "@faker-js/faker": "^8.1.0",
+    "@faker-js/faker": "^8.3.1",
     "@playwright/test": "^1.40.1",
-    "@swc-jotai/react-refresh": "^0.0.8"
+    "@swc-jotai/react-refresh": "^0.1.0"
   }
 }

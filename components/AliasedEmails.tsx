@@ -171,7 +171,7 @@ export default function InputCreator({ extension }: Props) {
           >
             <Input
               type="email"
-              icon={<IconMail size="1rem" />}
+              leftSection={<IconMail size="1rem" />}
               radius={"xl"}
               placeholder="email@example.com"
               onChange={handleChangeEmail}
@@ -215,7 +215,7 @@ export default function InputCreator({ extension }: Props) {
             }}
             variant={editingAliases ? "outline" : "subtle"}
             color="red"
-            rightIcon={
+            rightSection={
               editingAliases ? (
                 <IconSettings size="1rem" />
               ) : (
@@ -238,7 +238,7 @@ export default function InputCreator({ extension }: Props) {
                   }}
                   color={"red"}
                   onClick={() => handleDeleteAlias(alias.value)}
-                  rightIcon={
+                  rightSection={
                     <IconX
                       size="1rem"
                       style={{ right: 6, position: "absolute" }}
@@ -274,19 +274,17 @@ export default function InputCreator({ extension }: Props) {
                     w={extension ? rem(110) : rem(160)}
                     clearable
                     allowDeselect
-                    withinPortal
                     placeholder="none"
                     value={selectedAlias}
                     data={aliases}
                     searchable
-                    creatable
                     onChange={(value) => {
                       setSelectedAlias(value as string)
                     }}
-                    getCreateLabel={(query) =>
-                      `Use "${query.trim().replaceAll(/\W/g, "")}" as alias`
-                    }
-                    onCreate={(query) => {
+                    // getCreateLabel={(query) =>
+                    //   `Use "${query.trim().replaceAll(/\W/g, "")}" as alias`
+                    // }
+                    onOptionSubmit={(query) => {
                       handleCreateAlias(query)
                       return query.trim().replaceAll(/\W/g, "")
                     }}
@@ -340,13 +338,14 @@ export default function InputCreator({ extension }: Props) {
               <>
                 <Button
                   id="copyEmail"
+                  name="copyEmail"
                   size={extension ? "xs" : "md"}
                   h={80}
                   maw={extension ? "330px" : "100%"}
                   fullWidth
                   variant={copied ? "light" : "outline"}
                   onClick={copy}
-                  rightIcon={<IconCopy />}
+                  rightSection={<IconCopy />}
                   disabled={!validateEmail(email) || email.length === 0}
                   color={colorSelector("email")}
                 >

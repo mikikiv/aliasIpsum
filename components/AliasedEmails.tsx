@@ -28,6 +28,7 @@ import { useAtom } from "jotai"
 import { colorSelector } from "@/utils/colorSelector"
 import { localCopyHistoryAtom } from "./global/CopyHistory"
 import { AliasType } from "@/components/types"
+import aliasedEmail, { aliasedEmailObject } from "aliased-email"
 
 type Props = { extension?: boolean }
 
@@ -53,12 +54,10 @@ export default function InputCreator({ extension }: Props) {
 
   const updateTimestamp = () => {
     const updatingTimestamp = new Date(Date.now())
-      .toLocaleString("en-US", {
-        hour12: false,
-      })
-      .replaceAll(/[:\,]/g, "")
-      .replaceAll(/[\/]/g, "_")
-      .replace(/\s/g, "-")
+      .toLocaleString("en-US", { hourCycle: "h24" })
+      .replace(/[:\/]+/g, ".")
+      .replace(/,/g, "-")
+      .replace(/\s+/g, "")
     setRealtimeTimestamp(updatingTimestamp)
   }
 
@@ -68,22 +67,19 @@ export default function InputCreator({ extension }: Props) {
     return () => clearInterval(interval)
   }, [timestampEnabled])
 
-  const addAliasToEmail = (email: string, alias: string) => {
-    if (!email) return ""
-    return email.split("@").join(alias ? "+" + alias + "@" : "" + "@")
-  }
-
   useEffect(() => {
     //every time the selected alias changes, update the aliased email
     setFinalEmail(
       timestampEnabled
-        ? addAliasToEmail(
+        ? aliasedEmail(
             email,
             selectedAlias
               ? `${selectedAlias}-${realtimeTimestamp}`
               : realtimeTimestamp
           )
-        : addAliasToEmail(email, selectedAlias)
+        : selectedAlias
+        ? aliasedEmailObject(email, selectedAlias).email
+        : aliasedEmailObject(email).email
     )
   }, [email, selectedAlias, realtimeTimestamp, timestampEnabled])
 
@@ -95,7 +91,7 @@ export default function InputCreator({ extension }: Props) {
   const handleChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value)
     setFinalEmail(
-      addAliasToEmail(
+      aliasedEmail(
         e.target.value,
         selectedAlias || new Date(timestamp).getTime().toString()
       )

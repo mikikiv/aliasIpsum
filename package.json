@@ -1,19 +1,13 @@
 {
   "name": "quick-lorem",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "author": {
     "name": "Mikey Villavicencio",
     "email": "villavicem@gmail.com"
   },
   "description": "A quick lorem ipsum generator",
   "license": "GPL",
-  "keywords": [
-    "next",
-    "mantine",
-    "typescript",
-    "react",
-    "lorem"
-  ],
+  "keywords": ["next", "mantine", "typescript", "react", "lorem"],
   "repository": {
     "type": "git",
     "url": "https://github.com/mikikiv/quick-lorem.git"

@@ -1,3 +1,6 @@
+import { AliasType } from "@/components/types"
+import { colorSelector } from "@/utils/colorSelector"
+import { faker } from "@faker-js/faker"
 import {
   Box,
   Button,
@@ -14,7 +17,6 @@ import {
   rem,
 } from "@mantine/core"
 import { useLocalStorage } from "@mantine/hooks"
-import { faker } from "@faker-js/faker"
 import {
   IconAlertCircle,
   IconCopy,
@@ -23,12 +25,10 @@ import {
   IconSettingsCancel,
   IconX,
 } from "@tabler/icons-react"
-import { useEffect, useState } from "react"
+import aliasedEmail from "aliased-email"
 import { useAtom } from "jotai"
-import { colorSelector } from "@/utils/colorSelector"
+import { useEffect, useState } from "react"
 import { localCopyHistoryAtom } from "./global/CopyHistory"
-import { AliasType } from "@/components/types"
-import aliasedEmail, { aliasedEmailObject } from "aliased-email"
 
 type Props = { extension?: boolean }
 
@@ -78,8 +78,8 @@ export default function InputCreator({ extension }: Props) {
               : realtimeTimestamp
           )
         : selectedAlias
-        ? aliasedEmailObject(email, selectedAlias).email
-        : aliasedEmailObject(email).email
+          ? aliasedEmail(email, selectedAlias)
+          : email
     )
   }, [email, selectedAlias, realtimeTimestamp, timestampEnabled])
 

@@ -36,18 +36,58 @@ export default defineConfig({
   projects: [
     {
       name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
+      use: {
+        ...devices["Desktop Chrome"],
+        baseURL: "http://localhost:3000",
+        contextOptions: { permissions: ["clipboard-read", "clipboard-write"] },
+      },
     },
 
     {
       name: "firefox",
-      use: { ...devices["Desktop Firefox"] },
+      use: {
+        ...devices["Desktop Firefox"],
+        baseURL: "http://localhost:3000",
+        launchOptions: {
+          firefoxUserPrefs: {
+            "dom.events.asyncClipboard.readText": true,
+            "dom.events.testing.asyncClipboard": true,
+          },
+        },
+      },
     },
 
     {
       name: "webkit",
-      use: { ...devices["Desktop Safari"] },
+      use: {
+        ...devices["Desktop Safari"],
+        baseURL: "http://localhost:3000",
+        launchOptions: {
+          // https://webkit.org/blog/11353/async-clipboard-api/
+          args: ["--enable-features=AsyncClipboard"],
+        },
+        contextOptions: { permissions: ["clipboard-read"] },
+      },
     },
+
+    {
+      name: "extension chromium",
+      use: {
+        ...devices["Desktop Chrome"],
+        baseURL: "http://localhost:3000/extension",
+        contextOptions: { permissions: ["clipboard-read", "clipboard-write"] },
+      },
+    },
+
+    // {
+    //   name: "extension firefox",
+    //   use: { ...devices["Desktop Firefox"], baseURL: "http://localhost:3000/extension" },
+    // },
+
+    // {
+    //   name: "extension webkit",
+    //   use: { ...devices["Desktop Safari"], baseURL: "http://localhost:3000/extension"},
+    // },
 
     /* Test against mobile viewports. */
     // {

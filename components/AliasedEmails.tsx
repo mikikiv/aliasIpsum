@@ -27,7 +27,7 @@ import {
 } from "@tabler/icons-react"
 import aliasedEmail from "aliased-email"
 import { useAtom } from "jotai"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { localCopyHistoryAtom } from "./global/CopyHistory"
 
 type Props = { extension?: boolean }
@@ -43,57 +43,23 @@ export default function InputCreator({ extension }: Props) {
     defaultValue: "",
   })
   const [finalEmail, setFinalEmail] = useState("")
-  const [realtimeTimestamp, setRealtimeTimestamp] = useState("")
   const [copiedEmail, setCopiedEmail] = useState("")
   const [timestampEnabled, setTimestampEnabled] = useLocalStorage({
     key: "timestampEnabled",
     defaultValue: true,
   })
 
-  const timestamp = new Date().getTime()
-
-  const updateTimestamp = () => {
-    const updatingTimestamp = new Date(Date.now())
-      .toLocaleString("en-US", { hourCycle: "h24" })
-      .replace(/[:\/]+/g, ".")
-      .replace(/,/g, "-")
-      .replace(/\s+/g, "")
-    setRealtimeTimestamp(updatingTimestamp)
-  }
-
-  useEffect(() => {
-    updateTimestamp()
-    const interval = setInterval(updateTimestamp, 1000)
-    return () => clearInterval(interval)
-  }, [timestampEnabled])
-
-  useEffect(() => {
-    //every time the selected alias changes, update the aliased email
-    setFinalEmail(
-      timestampEnabled
-        ? aliasedEmail(
-            email,
-            selectedAlias
-              ? `${selectedAlias}-${realtimeTimestamp}`
-              : realtimeTimestamp
-          )
-        : selectedAlias
-          ? aliasedEmail(email, selectedAlias)
-          : email
-    )
-  }, [email, selectedAlias, realtimeTimestamp, timestampEnabled])
-
-  const validateEmail = (email: string) => {
+  const validateEmail = useCallback((email: string) => {
     const re = /\S+@\S+\.\S+/
     return re.test(email)
-  }
+  }, [])
 
   const handleChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value)
     setFinalEmail(
       aliasedEmail(
         e.target.value,
-        selectedAlias || new Date(timestamp).getTime().toString()
+        selectedAlias || new Date().getTime().toString()
       )
     )
   }
@@ -119,11 +85,12 @@ export default function InputCreator({ extension }: Props) {
   }
 
   const [copyHistory, setCopyHistory] = useAtom(localCopyHistoryAtom)
+  const uniqueCopyHistory = new Set(copyHistory.map((item) => item.value))
 
   const handleCopyEmail = () => {
     setCopiedEmail(finalEmail)
 
-    if (copyHistory.find((item) => item.value === finalEmail)) return
+    if (uniqueCopyHistory.has(finalEmail)) return
     setCopyHistory((history) => [
       ...history,
       {
@@ -134,6 +101,44 @@ export default function InputCreator({ extension }: Props) {
       },
     ])
   }
+
+  const useRealtimeTimestamp = () => {
+    const [realtimeTimestamp, setRealtimeTimestamp] = useState("")
+
+    useEffect(() => {
+      const updateTimestamp = () => {
+        const updatingTimestamp = new Date()
+          .toLocaleString("en-US", { hourCycle: "h24" })
+          .replace(/[:\/]+/g, ".")
+          .replace(/,/g, "-")
+          .replace(/\s+/g, "")
+        setRealtimeTimestamp(updatingTimestamp)
+      }
+
+      updateTimestamp()
+      const interval = setInterval(updateTimestamp, 1000)
+      return () => clearInterval(interval)
+    }, [])
+
+    return realtimeTimestamp
+  }
+
+  const realtimeTimestamp = useRealtimeTimestamp()
+
+  useEffect(() => {
+    setFinalEmail(
+      timestampEnabled
+        ? aliasedEmail(
+            email,
+            selectedAlias
+              ? `${selectedAlias}-${realtimeTimestamp}`
+              : realtimeTimestamp
+          )
+        : selectedAlias
+        ? aliasedEmail(email, selectedAlias)
+        : email
+    )
+  }, [email, selectedAlias, realtimeTimestamp, timestampEnabled])
 
   const generateRandomAlias = () => {
     const generatedWord = faker.word.sample({

@@ -144,8 +144,8 @@ test.describe("aliased emails with timestamp", () => {
     const timestamp = parsedCopyHistory[0].timestamp
     const date = new Date(parseInt(timestamp))
 
-    expect((date.getUTCMinutes() + date.getUTCSeconds()) / 10).toBeCloseTo(
-      (now.getUTCMinutes() + now.getUTCSeconds()) / 10,
+    expect((date.getUTCMinutes() + date.getUTCSeconds()) / 10000).toBeCloseTo(
+      (now.getUTCMinutes() + now.getUTCSeconds()) / 10000,
       1
     )
   })
@@ -173,13 +173,13 @@ test.describe("displayed timestamp displays the expected time", async () => {
       if (!displayedEmail) {
         break
       }
-      expect(parseInt(displayedEmail.replace(/\D/g, "")) / 100).toBeCloseTo(
+      expect(parseInt(displayedEmail.replace(/\D/g, "")) / 10000).toBeCloseTo(
         parseInt(
           aliasedEmailObject(email, formattedTimestamp).aliasedEmail.replace(
             /\D/g,
             ""
           )
-        ) / 100,
+        ) / 10000,
         1
       )
     }

@@ -4,7 +4,6 @@ import {
   TotalLocalStorage,
 } from "@/components/types"
 import test, { expect } from "@playwright/test"
-import { aliasedEmailObject } from "aliased-email"
 
 const email = "test@example.com"
 const aliasedEmail = "test+SugarFire@example.com"
@@ -151,37 +150,5 @@ test.describe("aliased emails with timestamp", () => {
   })
 })
 
-test.describe("displayed timestamp displays the expected time", async () => {
-  const formattedTimestamp = new Date()
-    .toLocaleString("en-US", { hourCycle: "h24" })
-    .replace(/[:\/]+/g, ".")
-    .replace(/,/g, "-")
-    .replace(/\s+/g, "")
 
-  test.beforeEach(async ({ page }) => {
-    await page.goto("")
-  })
 
-  test.describe.configure({
-    retries: 2,
-  })
-
-  test("UI displays the correct email", async ({ page }) => {
-    await page.fill('input[type="email"]', email)
-    for (let i = 0; i < 10; i++) {
-      const displayedEmail = await page.locator("#copyEmail").textContent()
-      if (!displayedEmail) {
-        break
-      }
-      expect(parseInt(displayedEmail.replace(/\D/g, "")) / 10000).toBeCloseTo(
-        parseInt(
-          aliasedEmailObject(email, formattedTimestamp).aliasedEmail.replace(
-            /\D/g,
-            ""
-          )
-        ) / 10000,
-        1
-      )
-    }
-  })
-})

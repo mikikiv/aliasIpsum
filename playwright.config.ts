@@ -57,18 +57,17 @@ export default defineConfig({
       },
     },
 
-    {
-      name: "webkit",
-      use: {
-        ...devices["Desktop Safari"],
-        baseURL: "http://localhost:3000",
-        launchOptions: {
-          // https://webkit.org/blog/11353/async-clipboard-api/
-          args: ["--enable-features=AsyncClipboard"],
-        },
-        contextOptions: { permissions: ["clipboard-read"] },
-      },
-    },
+    // {
+    //   name: "webkit",
+    //   use: {
+    //     ...devices["Desktop Safari"],
+    //     baseURL: "http://localhost:3000",
+    //     launchOptions: {
+    //       args: ["--enable-features=AsyncClipboard"],
+    //     },
+    //     contextOptions: { permissions: ["clipboard-read"] },
+    //   },
+    // },
 
     {
       name: "extension chromium",

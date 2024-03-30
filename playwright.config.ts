@@ -32,7 +32,7 @@ export default defineConfig({
     trace: "on-first-retry",
   },
   //Use the tests folder
-  testMatch: "./tests/**/*.spec.ts",
+  testMatch: "/tests/**/*.spec.ts",
 
   /* Configure projects for major browsers */
   projects: [

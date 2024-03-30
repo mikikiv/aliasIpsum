@@ -28,28 +28,31 @@ interface Props {
 
 export default function CopyGroupCard({ defaultOptions }: Props) {
   const [theme, setTheme] = useState("lorem")
-  const groupedOptions = defaultOptions.reduce((acc, option) => {
-    const key = option.textElement
-    const copyButton = (
-      <CopyButtons
-        key={option.label}
-        label={option.label}
-        textElement={option.textElement}
-        text={PlaceText({
-          textElement: option.textElement,
-          count: option.count,
-          depth: option.depth,
-          theme: theme,
-        })}
-      />
-    )
-    if (acc[key]) {
-      acc[key].push(copyButton)
-    } else {
-      acc[key] = [copyButton]
-    }
-    return acc
-  }, {} as { [key: string]: JSX.Element[] })
+  const groupedOptions = defaultOptions.reduce(
+    (acc, option) => {
+      const key = option.textElement
+      const copyButton = (
+        <CopyButtons
+          key={option.label}
+          label={option.label}
+          textElement={option.textElement}
+          text={PlaceText({
+            textElement: option.textElement,
+            count: option.count,
+            depth: option.depth,
+            theme: theme,
+          })}
+        />
+      )
+      if (acc[key]) {
+        acc[key].push(copyButton)
+      } else {
+        acc[key] = [copyButton]
+      }
+      return acc
+    },
+    {} as { [key: string]: JSX.Element[] }
+  )
 
   return (
     <Card shadow="sm" padding="md" radius="md">
@@ -131,7 +134,11 @@ export const CopyButtons = ({
             variant={copied ? "light" : "outline"}
             onClick={() => {
               copy()
-              if (!copyHistory || copyHistory[0] === undefined || copyHistory[0]["value"] !== value) {
+              if (
+                !copyHistory ||
+                copyHistory[0] === undefined ||
+                copyHistory[0]["value"] !== value
+              ) {
                 setCopyHistory((history) => [
                   ...history,
                   {

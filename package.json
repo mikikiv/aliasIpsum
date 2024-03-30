@@ -21,7 +21,8 @@
     "test": "playwright test",
     "test-dev": "playwright test --ui",
     "vercel-build": "next build",
-    "build:extension": "extensionReqs/build.sh"
+    "build:extension": "extensionReqs/build.sh",
+    "format": "@biomejs/biome format <files> --write"
   },
   "dependencies": {
     "@emotion/react": "^11.10.6",
@@ -45,6 +46,7 @@
     "typescript": "5.0.4"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.6.3",
     "@faker-js/faker": "^8.1.0",
     "@playwright/test": "^1.40.1",
     "@swc-jotai/react-refresh": "^0.0.8"

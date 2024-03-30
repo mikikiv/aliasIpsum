@@ -15,5 +15,5 @@ export type TotalLocalStorage = [
   { name: "email"; value: string },
   { name: "copyHistory"; value: CopyHistoryType[] },
   { name: "aliases"; value: AliasType[] },
-  { name: "timestampEnabled"; value: boolean | "true" | "false" }
+  { name: "timestampEnabled"; value: boolean | "true" | "false" },
 ]

@@ -81,10 +81,6 @@ export default function App(props: AppProps) {
   )
 }
 
-
-
-
-
 const ClearHistoryButton = () => {
   const [history, setHistory] = useAtom(localCopyHistoryAtom)
   const handleDeleteHistory = () => {
@@ -232,4 +228,3 @@ function DefaultLayout({
     </AppShell>
   )
 }
-

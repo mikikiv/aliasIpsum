@@ -131,7 +131,7 @@ export const CopyButtons = ({
             variant={copied ? "light" : "outline"}
             onClick={() => {
               copy()
-              if (!copyHistory || copyHistory[0]["value"] !== value) {
+              if (!copyHistory || copyHistory[0] === undefined || copyHistory[0]["value"] !== value) {
                 setCopyHistory((history) => [
                   ...history,
                   {

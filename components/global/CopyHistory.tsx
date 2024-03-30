@@ -108,10 +108,10 @@ export default function CopyHistory({ type, tooltip, scrollThreshold }: Props) {
     historyItem: CopyHistoryType
   }) => {
     return (
-      <CopyButton value={historyItem.value} timeout={5000}>
+      <CopyButton value={historyItem.value as string} timeout={5000}>
         {({ copied, copy }) => (
           <Tooltip
-            label={historyItem.value}
+            label={historyItem.value as string}
             events={
               tooltip === true || tooltip === undefined
                 ? { hover: true, focus: true, touch: true }

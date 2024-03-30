@@ -23,7 +23,7 @@
     "e2e-dev": "playwright test --ui",
     "vercel-build": "next build",
     "build:extension": "extensionReqs/build.sh",
-    "format": "@biomejs/biome format <files> --write"
+    "format": "biome format . --write"
   },
   "dependencies": {
     "@emotion/react": "^11.10.6",

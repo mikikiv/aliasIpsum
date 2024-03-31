@@ -33,7 +33,7 @@ export const PlaceText = ({
   depth,
   theme,
 }: Composition) => {
-  theme === undefined && (theme = "lorem")
+  theme = theme ? theme : lorem
 
   switch (theme) {
     case "lorem":
@@ -93,10 +93,9 @@ function handleText(
     case "json":
       if (depth !== undefined) {
         return makeJson(count, depth, inputText)
-      } else {
-        console.error("Depth is undefined in json type")
-        return "Depth is undefined in json type"
       }
+      console.error("Depth is undefined in json type")
+      return "Depth is undefined in json type"
 
     default:
       return "I'm not sure what you want me to do"

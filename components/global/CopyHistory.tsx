@@ -7,7 +7,7 @@ import {
   Button,
   CopyButton,
   Flex,
-  MantineNumberSize,
+  type MantineNumberSize,
   SimpleGrid,
   Text,
   Tooltip,
@@ -15,7 +15,7 @@ import {
 import { IconCopy } from "@tabler/icons-react"
 import { colorSelector } from "@/utils/colorSelector"
 import { useRouter } from "next/router"
-import { CopyHistoryType } from "@/components/types"
+import type { CopyHistoryType } from "@/components/types"
 
 type Props = {
   type?: "email" | "text"
@@ -30,16 +30,10 @@ export const localCopyHistoryAtom = atomWithStorage(
 )
 
 export default function CopyHistory({ type, tooltip, scrollThreshold }: Props) {
-  let copyHistory = useAtomValue(localCopyHistoryAtom)
+  const copyHistory = useAtomValue(localCopyHistoryAtom)
 
   const router = useRouter()
   const extension = router.pathname.includes("/extension")
-
-  type == "email" &&
-    (copyHistory = copyHistory.filter((item) => item.type === type))
-
-  type == "text" &&
-    (copyHistory = copyHistory.filter((item) => item.type === type))
 
   const ScrollingText = ({
     children,
@@ -47,7 +41,7 @@ export default function CopyHistory({ type, tooltip, scrollThreshold }: Props) {
     scrolling,
     ...rest
   }: {
-    children: String
+    children: string
     scrollThreshold: number
     scrolling: boolean
   }) => {
@@ -59,17 +53,15 @@ export default function CopyHistory({ type, tooltip, scrollThreshold }: Props) {
       const speed = scrollThreshold * 0.02
       if (speed > 0.8) {
         return 0.8
-      } else {
-        return speed
       }
+      return speed
     }
 
     const scrollAmount = (scrollThreshold: number) => {
       if (children.length <= scrollThreshold) {
         return 0
-      } else {
-        return (scrollThreshold - children.length) * scalingFactor + "ch"
       }
+      return `${(scrollThreshold - children.length) * scalingFactor}ch`
     }
 
     return (
@@ -91,7 +83,7 @@ export default function CopyHistory({ type, tooltip, scrollThreshold }: Props) {
                 }
               : {
                   transform: `translateX(${scrollAmount(scrollThreshold)})`,
-                  transition: `transform 0.1s ease-out`,
+                  transition: "transform 0.1s ease-out",
                 }
           }
         >
@@ -157,19 +149,18 @@ export default function CopyHistory({ type, tooltip, scrollThreshold }: Props) {
         month: "numeric",
         day: "numeric",
       })
-    } else {
-      return new Date(date).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "numeric",
-        day: "numeric",
-      })
     }
+    return new Date(date).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+    })
   }
 
   const groupedData: { [key: string]: CopyHistoryType[] } = copyHistory.reduce(
     (acc: { [key: string]: CopyHistoryType[] }, item) => {
       let itemTimestamp = item.timestamp
-      if (itemTimestamp == undefined || itemTimestamp == null) {
+      if (itemTimestamp === undefined || itemTimestamp == null) {
         itemTimestamp = new Date(946800000000).getTime()
       }
       const date = parseDate(new Date(itemTimestamp))
@@ -194,7 +185,7 @@ export default function CopyHistory({ type, tooltip, scrollThreshold }: Props) {
     setHistory((history) =>
       history.filter((item) => {
         let itemTimestamp = item.timestamp
-        if (itemTimestamp == undefined || itemTimestamp == null) {
+        if (itemTimestamp === undefined || itemTimestamp == null) {
           itemTimestamp = new Date(946800000000).getTime()
         }
         parseDate(new Date(itemTimestamp)) !== parseDate(new Date(date))
@@ -208,7 +199,7 @@ export default function CopyHistory({ type, tooltip, scrollThreshold }: Props) {
         .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
         .map((dates) => {
           return (
-            <Box key={"info-" + dates}>
+            <Box key={`info-${dates}`}>
               <Flex justify={"space-between"} pt={8} pb={4}>
                 {!deleting ? (
                   <>
@@ -227,7 +218,7 @@ export default function CopyHistory({ type, tooltip, scrollThreshold }: Props) {
                     </Badge>
                     <Text key={dates} size="xs" weight={700}>
                       {dates === parseDate(new Date())
-                        ? "Today, " + parseDate(new Date(dates), false)
+                        ? `Today, ${parseDate(new Date(dates), false)}`
                         : parseDate(new Date(dates), true)}
                     </Text>
                   </>
@@ -238,7 +229,7 @@ export default function CopyHistory({ type, tooltip, scrollThreshold }: Props) {
                       fullWidth
                       color="red"
                       onClick={() => {
-                        handleDeleteHistoryGroup(parseInt(dates))
+                        handleDeleteHistoryGroup(Number.parseInt(dates))
                       }}
                     >
                       Clear
@@ -246,16 +237,30 @@ export default function CopyHistory({ type, tooltip, scrollThreshold }: Props) {
                   </Button.Group>
                 )}
               </Flex>
-              <SimpleGrid verticalSpacing="xs" key={"button-" + dates}>
+              <SimpleGrid verticalSpacing="xs" key={`button-${dates}`}>
                 {groupedData[dates]
                   .sort()
                   .reverse()
-                  .map((historyItem: CopyHistoryType) => (
-                    <CopyHistoryItem
-                      historyItem={historyItem}
-                      key={historyItem.id}
-                    />
-                  ))}
+                  .map((historyItem: CopyHistoryType) => {
+                    // exclude all but the last non-duplicate item
+                    if (
+                      historyItem.id !==
+                      groupedData[dates].find(
+                        (item) =>
+                          item.type === historyItem.type &&
+                          item.value === historyItem.value
+                      )?.id
+                    ) {
+                      return null
+                    }
+
+                    return (
+                      <CopyHistoryItem
+                        historyItem={historyItem}
+                        key={historyItem.id}
+                      />
+                    )
+                  })}
               </SimpleGrid>
             </Box>
           )

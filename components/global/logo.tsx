@@ -1,3 +1,4 @@
+import { Image } from "@mantine/core"
 import React from "react"
 
 export default function Logo({ ...rest }) {
@@ -6,6 +7,8 @@ export default function Logo({ ...rest }) {
       viewBox="-20 18 90 80"
       width={"60px"}
       xmlns="http://www.w3.org/2000/svg"
+      aria-label="logo"
+      role="img"
       {...rest}
     >
       <g transform="rotate(-53 60 50) translate(10) scale(.6) translate(-18 -23)">

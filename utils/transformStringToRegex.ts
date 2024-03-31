@@ -3,7 +3,7 @@ export function stringToRegex(pattern: string): RegExp {
     // Attempt to create RegExp object with the pattern
     return new RegExp(pattern, "g") // 'g' flag for global search and replace
   } catch (error) {
-    return new RegExp("") // Return an empty RegExp object if there's an error
+    return /(?:)/ // Return an empty RegExp object if there's an error
   }
 }
 

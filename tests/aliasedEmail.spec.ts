@@ -1,4 +1,4 @@
-import {
+import type {
   AliasType,
   CopyHistoryType,
   TotalLocalStorage,
@@ -96,7 +96,7 @@ test.describe("aliased emails", () => {
     expect(typeof parsedCopyHistory[0].timestamp).toBe("number")
 
     // Remove the timestamp property for comparison
-    delete parsedCopyHistory[0].timestamp
+    parsedCopyHistory[0].timestamp = undefined
 
     // Now compare the rest of the object
     expect(parsedCopyHistory).toEqual([
@@ -141,7 +141,7 @@ test.describe("aliased emails with timestamp", () => {
     )
     const parsedCopyHistory = copyHistory ? JSON.parse(copyHistory.value) : []
     const timestamp = parsedCopyHistory[0].timestamp
-    const date = new Date(parseInt(timestamp))
+    const date = new Date(Number.parseInt(timestamp))
 
     expect((date.getUTCMinutes() + date.getUTCSeconds()) / 10000).toBeCloseTo(
       (now.getUTCMinutes() + now.getUTCSeconds()) / 10000,

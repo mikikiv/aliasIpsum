@@ -1,11 +1,11 @@
-import { AppProps } from "next/app"
+import type { AppProps } from "next/app"
 import { Analytics } from "@vercel/analytics/react"
 import Head from "next/head"
 import {
   AppShell,
   Aside,
   Button,
-  ColorScheme,
+  type ColorScheme,
   ColorSchemeProvider,
   Footer,
   Group,
@@ -110,7 +110,7 @@ function ExtentionLayout({
   colorScheme: string
 
   children: React.ReactNode
-  [x: string]: any
+  [x: string]: React.ReactNode
 }) {
   const extensionWidth = "380px"
   const extensionHeight = "400px"
@@ -151,7 +151,7 @@ function DefaultLayout({
 }: {
   colorScheme: string
   children: React.ReactNode
-  [x: string]: any
+  [x: string]: React.ReactNode
 }) {
   return (
     <AppShell

@@ -1,94 +1,124 @@
-import { Box, Button, CopyButton, Input, SimpleGrid } from "@mantine/core"
+import { Box, Card, Grid, Input, Text, Tooltip } from "@mantine/core"
 import { useInputState } from "@mantine/hooks"
 import React, { useEffect, useState } from "react"
 import { regexReplacer } from "@/utils/regexReplacer"
-import { useAtom } from "jotai"
-
-import { localCopyHistoryAtom } from "./global/CopyHistory"
 import { stringToRegex } from "@/utils/transformStringToRegex"
+import { CopyComponent } from "@/components/global/CopyComponent"
+import { IconAlertCircle, IconRegex } from "@tabler/icons-react"
 
-type Props = {}
+type Props = {
+  extension?: boolean
+}
 
-const RegexReplacer = (props: Props) => {
+const RegexReplacer = ({ extension }: Props) => {
   const [regexInput, setRegexInput] = useInputState("")
   const [replaceValue, setReplaceValue] = useInputState("")
   const [testText, setTestText] = useInputState("")
   const [preview, setPreview] = useInputState("")
   const [regex, setRegex] = useState<RegExp | null>(null)
 
-  const [copyHistory, setCopyHistory] = useAtom(localCopyHistoryAtom)
-  const uniqueCopyHistory = new Set(copyHistory.map((item) => item.value))
-
-  const handleCopy = (value: string, type: string) => {
-    if (uniqueCopyHistory.has(value)) return
-    setCopyHistory((history) => [
-      ...history,
-      {
-        id: history.length,
-        type: type,
-        value,
-        timestamp: new Date().getTime(),
-      },
-    ])
-  }
-
   useEffect(() => {
     setRegex(stringToRegex(regexInput))
     setPreview(regexReplacer(regexInput, replaceValue, testText))
-  }, [regexInput, replaceValue, testText])
+  }, [regexInput, replaceValue, testText, setPreview])
 
   return (
-    <Box>
-      <Input.Wrapper label="Regex">
-        <SimpleGrid cols={2}>
-          <Input
-            value={regexInput}
-            onChange={setRegexInput}
-            placeholder="regex"
+    <Card
+      shadow="sm"
+      padding={extension ? "xs" : "lg"}
+      radius="md"
+      maw={extension ? "380px" : "100%"}
+    >
+      <Grid gutter={extension ? 0 : "xs"}>
+        <Grid.Col span={12}>
+          <Text mx={8}> Regex Replace Tester</Text>
+        </Grid.Col>
+        <Grid.Col span={12} data-name={"regexInput"}>
+          <Input.Wrapper
+            description={
+              "Enter a regex pattern to match text. Use the test text input to see the preview. This is still a work in progress."
+            }
+            descriptionProps={
+              extension ? { display: "none" } : { display: "block" }
+            }
+          >
+            <Input
+              value={regexInput}
+              onChange={setRegexInput}
+              placeholder="regex"
+              type="text"
+              icon={<IconRegex size="1rem" />}
+              radius={"xl"}
+              autoComplete="off"
+              autoSave="off"
+              rightSection={
+                <Tooltip
+                  label="Remember to use \ to escape special characters"
+                  position="left"
+                >
+                  <Box>
+                    <IconAlertCircle
+                      size="1rem"
+                      style={{ display: "block", opacity: 0.5 }}
+                    />
+                  </Box>
+                </Tooltip>
+              }
+            />
+          </Input.Wrapper>
+        </Grid.Col>
+        <Grid.Col span={6} data-name={"Text Text"}>
+          <Input.Wrapper label="Test text">
+            <Input
+              value={testText}
+              onChange={setTestText}
+              placeholder="test text"
+            />
+          </Input.Wrapper>
+        </Grid.Col>
+        <Grid.Col span={6} data-name={"Replacement Text"}>
+          <Input.Wrapper label="replacement text">
+            <Input
+              value={replaceValue}
+              onChange={setReplaceValue}
+              placeholder="replacement text"
+            />
+          </Input.Wrapper>
+        </Grid.Col>
+        <Grid.Col span={6} data-name={"Copy Regex"}>
+          <CopyComponent
+            label={regex?.toString()}
+            type="regex"
+            value={regex?.toString()}
+            fullWidth
+            h={60}
+            disabled={
+              regex && regexInput.length > 0 && regex.toString() !== "/(?:)/"
+                ? false
+                : true
+            }
           />
-          {regex && regexInput.length > 0 && regex.toString() !== "/(?:)/" && (
-            <Box
-              onClick={() => {
-                handleCopy(regex.toString(), 'regex')
-              }}
-            >
-              <CopyButton value={regex ? regex.toString() : ""}>
-                {({ copied, copy }) => (
-                  <Button fullWidth>{regex.toString()}</Button>
-                )}
-              </CopyButton>
-            </Box>
-          )}
-        </SimpleGrid>
-      </Input.Wrapper>
-      <Input.Wrapper label="Test text">
-        <Input
-          value={testText}
-          onChange={setTestText}
-          placeholder="test text"
-        />
-      </Input.Wrapper>
-      <Input.Wrapper label="replacement text">
-        <SimpleGrid cols={2}>
-          <Input
-            value={replaceValue}
-            onChange={setReplaceValue}
-            placeholder="replacement text"
+        </Grid.Col>
+        <Grid.Col span={6} data-name={"Copy Preview"}>
+          <CopyComponent
+            label={preview}
+            type="string"
+            value={preview}
+            fullWidth
+            h={60}
+            disabled={preview.length > 0 ? false : true}
           />
-          {preview && preview.length > 0 && (
-            <Box
-              onClick={() => {
-                handleCopy(preview, 'string')
-              }}
-            >
-              <CopyButton value={preview}>
-                {({ copied, copy }) => <Button fullWidth>{preview}</Button>}
-              </CopyButton>
-            </Box>
-          )}
-        </SimpleGrid>
-      </Input.Wrapper>
-    </Box>
+        </Grid.Col>
+        <Grid.Col span={12} data-name={"replaceFunction"}>
+          <CopyComponent
+            label={`.replace(${regex}, "${replaceValue}")`}
+            value={`.replace(${regex}, "${replaceValue}")`}
+            type="function"
+            fullWidth
+          />
+        </Grid.Col>
+      </Grid>
+    </Card>
   )
 }
 

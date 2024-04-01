@@ -42,7 +42,6 @@ export default function InputCreator({ extension }: Props) {
     defaultValue: "",
   })
   const [finalEmail, setFinalEmail] = useState("")
-  const [copiedEmail, setCopiedEmail] = useState("")
   const [timestampEnabled, setTimestampEnabled] = useLocalStorage({
     key: "timestampEnabled",
     defaultValue: true,

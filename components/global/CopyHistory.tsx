@@ -18,7 +18,7 @@ import { useRouter } from "next/router"
 import type { CopyHistoryType } from "@/components/types"
 
 type Props = {
-  type?: "email" | "text"
+  type?: "email" | "text" | "regex" | "string"
   spacing?: MantineNumberSize
   tooltip?: boolean
   scrollThreshold: number

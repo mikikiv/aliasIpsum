@@ -56,7 +56,6 @@ export const CopyComponent = ({ value, type, label, ...rest }: Props) => {
             <Button
               {...rest}
               size={"md"}
-              h={100}
               color={colorSelector(type)}
               variant={copied ? "light" : "outline"}
               onClick={() => {

@@ -44,6 +44,7 @@ export default function CopyGroupCard({ defaultOptions }: Props) {
             theme: theme,
           })}
           fullWidth
+          h={80}
         />
       )
       if (acc[key]) {

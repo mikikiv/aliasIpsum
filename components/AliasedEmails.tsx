@@ -286,7 +286,7 @@ export default function InputCreator({ extension }: Props) {
                 {selectedAlias && timestampEnabled && "-"}
                 <Box px={extension ? rem(1) : rem(6)}>
                   <Chip
-                    data-cy={"timestampEnabled"}
+                    data-test={"timestampEnabled"}
                     variant="light"
                     checked={timestampEnabled}
                     size={extension ? "xs" : "sm"}

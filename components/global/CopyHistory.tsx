@@ -114,7 +114,7 @@ export default function CopyHistory({ type, tooltip, scrollThreshold }: Props) {
             position={"bottom"}
           >
             <Button
-              data-cy={historyItem.value}
+              data-test={historyItem.value}
               leftIcon={<IconCopy />}
               color={colorSelector(historyItem.type)}
               variant={copied ? "filled" : "outline"}
@@ -237,7 +237,11 @@ export default function CopyHistory({ type, tooltip, scrollThreshold }: Props) {
                   </Button.Group>
                 )}
               </Flex>
-              <SimpleGrid verticalSpacing="xs" key={`button-${dates}`}>
+              <SimpleGrid
+                verticalSpacing="xs"
+                key={`button-${dates}`}
+                data-test="copyHistoryItems"
+              >
                 {groupedData[dates]
                   .sort()
                   .reverse()

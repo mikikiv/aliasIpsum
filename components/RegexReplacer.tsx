@@ -33,7 +33,7 @@ const RegexReplacer = ({ extension }: Props) => {
         <Grid.Col span={12}>
           <Text mx={8}> Regex Replace Tester</Text>
         </Grid.Col>
-        <Grid.Col span={12} data-name={"regexInput"}>
+        <Grid.Col span={12}>
           <Input.Wrapper
             description={
               "Enter a regex pattern to match text. Use the test text input to see the preview. This is still a work in progress."
@@ -51,6 +51,7 @@ const RegexReplacer = ({ extension }: Props) => {
               radius={"xl"}
               autoComplete="off"
               autoSave="off"
+              data-test="regex-input"
               rightSection={
                 <Tooltip
                   label="Remember to use \ to escape special characters"
@@ -73,6 +74,7 @@ const RegexReplacer = ({ extension }: Props) => {
               value={testText}
               onChange={setTestText}
               placeholder="test text"
+              data-test="regex-test-text"
             />
           </Input.Wrapper>
         </Grid.Col>
@@ -82,6 +84,7 @@ const RegexReplacer = ({ extension }: Props) => {
               value={replaceValue}
               onChange={setReplaceValue}
               placeholder="replacement text"
+              data-test="regex-replacement-text"
             />
           </Input.Wrapper>
         </Grid.Col>
@@ -97,6 +100,7 @@ const RegexReplacer = ({ extension }: Props) => {
                 ? false
                 : true
             }
+            data-test="regex-copy"
           />
         </Grid.Col>
         <Grid.Col span={6} data-name={"Copy Preview"}>
@@ -107,6 +111,7 @@ const RegexReplacer = ({ extension }: Props) => {
             fullWidth
             h={60}
             disabled={preview.length > 0 ? false : true}
+            data-test="regex-preview"
           />
         </Grid.Col>
         <Grid.Col span={12} data-name={"replaceFunction"}>
@@ -115,6 +120,7 @@ const RegexReplacer = ({ extension }: Props) => {
             value={`.replace(${regex}, "${replaceValue}")`}
             type="function"
             fullWidth
+            data-test="regex-function"
           />
         </Grid.Col>
       </Grid>

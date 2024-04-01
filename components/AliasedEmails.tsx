@@ -1,4 +1,4 @@
-import { AliasType } from "@/components/types"
+import type { AliasType } from "@/components/types"
 import { colorSelector } from "@/utils/colorSelector"
 import { faker } from "@faker-js/faker"
 import {
@@ -26,9 +26,8 @@ import {
   IconX,
 } from "@tabler/icons-react"
 import aliasedEmail from "aliased-email"
-import { useAtom } from "jotai"
 import { useCallback, useEffect, useState } from "react"
-import { localCopyHistoryAtom } from "./global/CopyHistory"
+import { CopyComponent } from "@/components/global/CopyComponent"
 
 type Props = { extension?: boolean }
 
@@ -43,7 +42,6 @@ export default function InputCreator({ extension }: Props) {
     defaultValue: "",
   })
   const [finalEmail, setFinalEmail] = useState("")
-  const [copiedEmail, setCopiedEmail] = useState("")
   const [timestampEnabled, setTimestampEnabled] = useLocalStorage({
     key: "timestampEnabled",
     defaultValue: true,
@@ -65,12 +63,12 @@ export default function InputCreator({ extension }: Props) {
   }
 
   const handleCreateAlias = (query: string) => {
-    query = query.trim().replaceAll(/\W/g, "")
-    if (aliases.find((a) => a.value === query)) return
-    if (query.length === 0) return
+    const trimmedQuery = query.trim().replaceAll(/\W/g, "")
+    if (aliases.find((a) => a.value === trimmedQuery)) return
+    if (trimmedQuery.length === 0) return
     setAliases([
       ...aliases,
-      { label: query, value: query.trim().replaceAll(/\W/g, "") },
+      { label: trimmedQuery, value: trimmedQuery.trim().replaceAll(/\W/g, "") },
     ])
   }
   const [editingAliases, setEditingAliases] = useState(false)
@@ -82,24 +80,6 @@ export default function InputCreator({ extension }: Props) {
       setEditingAliases(false)
       setSelectedAlias("")
     }
-  }
-
-  const [copyHistory, setCopyHistory] = useAtom(localCopyHistoryAtom)
-  const uniqueCopyHistory = new Set(copyHistory.map((item) => item.value))
-
-  const handleCopyEmail = () => {
-    setCopiedEmail(finalEmail)
-
-    if (uniqueCopyHistory.has(finalEmail)) return
-    setCopyHistory((history) => [
-      ...history,
-      {
-        id: history.length,
-        type: "email",
-        value: finalEmail,
-        timestamp: new Date().getTime(),
-      },
-    ])
   }
 
   const useRealtimeTimestamp = () => {
@@ -206,7 +186,7 @@ export default function InputCreator({ extension }: Props) {
             Random Alias
           </Button>
         </Grid.Col>
-        <Grid.Col span={2}></Grid.Col>
+        <Grid.Col span={2}>{}</Grid.Col>
         <Grid.Col span={5} my={"xs"}>
           <Button
             fullWidth
@@ -265,7 +245,7 @@ export default function InputCreator({ extension }: Props) {
                   <Text lineClamp={1} size={extension ? "xs" : "sm"}>
                     {email.indexOf("@") === -1
                       ? email.slice(0, email.length)
-                      : email.slice(0, email.indexOf("@")) + "+"}
+                      : `${email.slice(0, email.indexOf("@"))}+`}
                   </Text>
                 </Box>
                 <Box px={rem(4)}>
@@ -306,7 +286,7 @@ export default function InputCreator({ extension }: Props) {
                 {selectedAlias && timestampEnabled && "-"}
                 <Box px={extension ? rem(1) : rem(6)}>
                   <Chip
-                    data-cy={"timestampEnabled"}
+                    data-test={"timestampEnabled"}
                     variant="light"
                     checked={timestampEnabled}
                     size={extension ? "xs" : "sm"}
@@ -335,27 +315,19 @@ export default function InputCreator({ extension }: Props) {
           </Grid.Col>
         )}
 
-        <Grid.Col span={12} onClick={handleCopyEmail}>
-          <CopyButton value={finalEmail}>
-            {({ copied, copy }) => (
-              <>
-                <Button
-                  id="copyEmail"
-                  size={extension ? "xs" : "md"}
-                  h={80}
-                  maw={extension ? "330px" : "100%"}
-                  fullWidth
-                  variant={copied ? "light" : "outline"}
-                  onClick={copy}
-                  rightIcon={<IconCopy />}
-                  disabled={!validateEmail(email) || email.length === 0}
-                  color={colorSelector("email")}
-                >
-                  {copied ? `Copied ${copiedEmail}` : `${finalEmail}`}
-                </Button>
-              </>
-            )}
-          </CopyButton>
+        <Grid.Col span={12}>
+          <CopyComponent
+            value={finalEmail}
+            label={finalEmail}
+            type="email"
+            size={extension ? "xs" : "md"}
+            fullWidth
+            id="copyEmail"
+            h={80}
+            maw={extension ? "330px" : "100%"}
+            rightIcon={<IconCopy />}
+            disabled={!validateEmail(email) || email.length === 0}
+          />
         </Grid.Col>
       </Grid>
     </Card>

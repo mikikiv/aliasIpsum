@@ -6,7 +6,7 @@ export type AliasType = {
 export type CopyHistoryType = {
   id: number
   type: string
-  value: string
+  value: string | RegExp | null
   timestamp?: number
 }
 

@@ -3,9 +3,7 @@ import { PlaceText } from "../utils/transformer"
 import { Box, Text } from "@mantine/core"
 import RegexReplacer from "@/components/RegexReplacer"
 
-type Props = {}
-
-export default function text({}: Props) {
+export default function text() {
   return (
     <Box>
       <RegexReplacer />

@@ -4,7 +4,6 @@
 // lines that almost look like the top of a mouse wheel
 
 import { Box, Select } from "@mantine/core"
-import React, { useState } from "react"
 
 interface Props {
   options: string[]

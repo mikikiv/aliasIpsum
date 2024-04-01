@@ -15,6 +15,7 @@ import { PlaceText } from "../utils/transformer"
 import { useAtom } from "jotai"
 import { localCopyHistoryAtom } from "./global/CopyHistory"
 import { colorSelector } from "@/utils/colorSelector"
+import { CopyComponent } from "@/components/global/CopyComponent"
 
 interface Props {
   extension?: boolean
@@ -32,16 +33,18 @@ export default function CopyGroupCard({ defaultOptions }: Props) {
     (acc, option) => {
       const key = option.textElement
       const copyButton = (
-        <CopyButtons
+        <CopyComponent
           key={option.label}
           label={option.label}
-          textElement={option.textElement}
-          text={PlaceText({
+          type={option.textElement}
+          value={PlaceText({
             textElement: option.textElement,
             count: option.count,
             depth: option.depth,
             theme: theme,
           })}
+          fullWidth
+          h={80}
         />
       )
       if (acc[key]) {
@@ -99,62 +102,5 @@ export default function CopyGroupCard({ defaultOptions }: Props) {
         ))}
       </SimpleGrid>
     </Card>
-  )
-}
-
-export const CopyButtons = ({
-  label,
-  textElement,
-  text: value,
-  ...rest
-}: {
-  label: string
-  textElement: string
-  text: string
-}) => {
-  const [copyHistory, setCopyHistory] = useAtom(localCopyHistoryAtom)
-
-  return (
-    <CopyButton value={value} {...rest}>
-      {({ copied, copy }) => (
-        <Tooltip
-          label={value}
-          withinPortal
-          multiline
-          maw={400}
-          transitionProps={{ transition: "fade", duration: 500 }}
-          openDelay={100}
-          events={{ hover: true, focus: true, touch: false }}
-          style={{ lineBreak: "anywhere" }}
-        >
-          <Button
-            size={"md"}
-            h={100}
-            color={colorSelector(textElement)}
-            variant={copied ? "light" : "outline"}
-            onClick={() => {
-              copy()
-              if (
-                !copyHistory ||
-                copyHistory[0] === undefined ||
-                copyHistory[0]["value"] !== value
-              ) {
-                setCopyHistory((history) => [
-                  ...history,
-                  {
-                    id: history.length,
-                    type: textElement,
-                    value: value,
-                    timestamp: Date.now(),
-                  },
-                ])
-              }
-            }}
-          >
-            {copied ? `Copied ${label}` : label}
-          </Button>
-        </Tooltip>
-      )}
-    </CopyButton>
   )
 }

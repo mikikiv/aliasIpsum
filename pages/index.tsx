@@ -3,6 +3,7 @@ import TextGeneration from "../components/TextGeneration"
 import { Container, SimpleGrid } from "@mantine/core"
 import { options } from "@/utils/options"
 import AliasedEmails from "@/components/AliasedEmails"
+import RegexReplacer from "@/components/RegexReplacer"
 
 export default function Home() {
   return (
@@ -15,6 +16,7 @@ export default function Home() {
       <Container>
         <SimpleGrid>
           <AliasedEmails />
+          <RegexReplacer />
           <TextGeneration defaultOptions={options} />
         </SimpleGrid>
       </Container>

@@ -2,7 +2,7 @@ import {
   Badge,
   Button,
   Group,
-  MantineColor,
+  type MantineColor,
   Popover,
   Stack,
   Text,
@@ -20,7 +20,7 @@ type Props = {
   onCancel?: () => void
   confirmColor?: MantineColor
   cancelColor?: MantineColor
-  [x: string]: any
+  [x: string]: string | boolean | (() => void) | undefined
 }
 export default function ConfirmationPopup({
   title,
@@ -38,9 +38,7 @@ export default function ConfirmationPopup({
   const [opened, setOpened] = useState(false)
 
   const handleCancel = () => {
-    {
-      onCancel && onCancel()
-    }
+    onCancel?.()
     setOpened(false)
   }
 

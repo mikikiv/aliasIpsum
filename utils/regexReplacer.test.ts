@@ -5,53 +5,50 @@ describe("Basic strings", () => {
     expect(regexReplacer("world", "universe", "hello world")).toBe(
       "hello universe"
     )
+  })
 
-    test("Regular Expression Test", () => {
-      expect(regexReplacer("l+", "X", "hello world")).toBe("heXo worXd")
-    })
+  test("Regular Expression Test", () => {
+    expect(regexReplacer("l+", "X", "hello world")).toBe("heXo worXd")
+  })
 
-    test("Empty String Replacement", () => {
-      expect(regexReplacer("world", "", "hello world")).toBe("hello ")
-    })
+  test("Empty String Replacement", () => {
+    expect(regexReplacer("world", "", "hello world")).toBe("hello ")
+  })
 
-    test("No Matches", () => {
-      expect(regexReplacer("foo", "bar", "hello world")).toBe("hello world")
-    })
+  test("No Matches", () => {
+    expect(regexReplacer("foo", "bar", "hello world")).toBe("hello world")
+  })
 
-    test("Case Sensitivity", () => {
-      expect(regexReplacer("W", "X", "hello World")).toBe("hello Xorld")
-    })
+  test("Case Sensitivity", () => {
+    expect(regexReplacer("W", "X", "hello World")).toBe("hello Xorld")
+  })
 
-    test("Replacement with Special Characters", () => {
-      expect(regexReplacer("world", "$100", "hello world")).toBe("hello $100")
-    })
+  test("Replacement with Special Characters", () => {
+    expect(regexReplacer("world", "$100", "hello world")).toBe("hello $100")
+  })
 
-    test("Multiple Replacements", () => {
-      expect(regexReplacer("o", "X", "hello world")).toBe("hellX wXrld")
-    })
+  test("Multiple Replacements", () => {
+    expect(regexReplacer("o", "X", "hello world")).toBe("hellX wXrld")
+  })
 
-    test("Long Test String", () => {
-      expect(
-        regexReplacer(
-          "hello",
-          "hi",
-          "hello world, hello universe, hello galaxy"
-        )
-      ).toBe("hi world, hi universe, hi galaxy")
-    })
+  test("Long Test String", () => {
+    expect(
+      regexReplacer("hello", "hi", "hello world, hello universe, hello galaxy")
+    ).toBe("hi world, hi universe, hi galaxy")
+  })
 
-    test("Empty Inputs", () => {
-      expect(regexReplacer("", "", "")).toBe("")
-    })
+  test("Empty Inputs", () => {
+    expect(regexReplacer("", "", "")).toBe("")
   })
 })
+
 describe("Special characters", () => {
   test("Money Test", () => {
     expect(regexReplacer("[$,]", "", "$2,000")).toBe("2000")
   })
 
   test("Special Characters and texts", () => {
-    expect(regexReplacer("$2", "", "$2,000")).toBe(",000")
+    expect(regexReplacer("\\$2", "", "$2,000")).toBe(",000")
   })
 
   test("Dollar Sign Replacement", () => {

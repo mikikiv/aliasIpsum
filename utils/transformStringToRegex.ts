@@ -1,9 +1,12 @@
-export function stringToRegex(pattern: string): RegExp {
+export function stringToRegex(pattern: string): RegExp | string {
   try {
     // Attempt to create RegExp object with the pattern
     return new RegExp(pattern, "g") // 'g' flag for global search and replace
   } catch (error) {
-    return /(?:)/ // Return an empty RegExp object if there's an error
+    console.error(
+      `we aren't good at handling unterminated regex patterns yet \n ---- \n ${error}`
+    )
+    return pattern as string // Return the input as a string if it's not a valid regex pattern
   }
 }
 

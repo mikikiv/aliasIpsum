@@ -1,24 +1,41 @@
 import { stringToRegex, performReplacement } from "./transformStringToRegex"
 
-export function regexReplacer(
-  pattern: string,
-  replacement: string,
+type Props = {
+  pattern: string
   testString: string
-): string {
-  try {
-    // Handle special case where dollar sign should not be removed
-    if (pattern === "$" && replacement === "") {
-      // Replace '$' only if it's followed by a digit or comma
-      return testString.replace(/\$(?=\d|,)/g, "")
+} & (TargetProps | ReplacementProps)
+
+type TargetProps = {
+  matchReplace: "match"
+}
+
+type ReplacementProps = {
+  matchReplace: "replace"
+  replacementValue: string
+}
+
+export function regexReplacer(props: Props) {
+  // if the pattern is not a regex, we will just use it as a string
+  const pattern: string | RegExp = stringToRegex(props.pattern)
+
+  if (props.matchReplace === "replace" && pattern instanceof RegExp) {
+    return performReplacement(pattern, props.replacementValue, props.testString)
+  }
+
+  if (props.matchReplace === "match" && pattern instanceof RegExp) {
+    if (props.testString.match(pattern)?.length == null) {
+      return ""
     }
+    if (props.testString.match(pattern)?.length === 1) {
+      return props.testString.match(pattern)?.toString()
+    }
+    return `["${props.testString.match(pattern)?.join('", "')}"]`
+  }
+  if (props.matchReplace === "replace" && pattern instanceof String) {
+    return props.testString.replace(pattern, props.replacementValue)
+  }
 
-    // Transform the pattern string into a regular expression
-    const regex = stringToRegex(pattern)
-
-    // Perform the replacement using the regular expression
-    return performReplacement(regex, replacement, testString)
-  } catch (error) {
-    console.error("Error in regexReplacer:", error)
-    return testString // Return the original string if there's an error
+  if (props.matchReplace === "match" && pattern instanceof String) {
+    return props.testString.match(pattern)?.toString()
   }
 }

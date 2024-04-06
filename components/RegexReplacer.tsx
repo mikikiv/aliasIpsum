@@ -1,4 +1,4 @@
-import { Box, Card, Grid, Input, Text, Tooltip } from "@mantine/core"
+import { Box, Card, Grid, Input, Switch, Text, Tooltip } from "@mantine/core"
 import { useInputState } from "@mantine/hooks"
 import React, { useEffect, useState } from "react"
 import { regexReplacer } from "@/utils/regexReplacer"
@@ -12,15 +12,23 @@ type Props = {
 
 const RegexReplacer = ({ extension }: Props) => {
   const [regexInput, setRegexInput] = useInputState("")
-  const [replaceValue, setReplaceValue] = useInputState("")
-  const [testText, setTestText] = useInputState("")
+  const [replacementValue, setReplacementValue] = useInputState("")
+  const [testString, setTestString] = useInputState("")
   const [preview, setPreview] = useInputState("")
-  const [regex, setRegex] = useState<RegExp | null>(null)
+  const [replace, setReplace] = useInputState(true)
+  const [regex, setRegex] = useState<RegExp | string | null>(null)
 
   useEffect(() => {
     setRegex(stringToRegex(regexInput))
-    setPreview(regexReplacer(regexInput, replaceValue, testText))
-  }, [regexInput, replaceValue, testText, setPreview])
+    setPreview(
+      regexReplacer({
+        pattern: regexInput ? regexInput : "",
+        testString,
+        matchReplace: replace ? "replace" : "match",
+        replacementValue,
+      })
+    )
+  }, [regexInput, replacementValue, testString, setPreview, replace])
 
   return (
     <Card
@@ -71,8 +79,8 @@ const RegexReplacer = ({ extension }: Props) => {
         <Grid.Col span={6} data-name={"Text Text"}>
           <Input.Wrapper label="Test text">
             <Input
-              value={testText}
-              onChange={setTestText}
+              value={testString}
+              onChange={setTestString}
               placeholder="test text"
               data-test="regex-test-text"
             />
@@ -81,10 +89,20 @@ const RegexReplacer = ({ extension }: Props) => {
         <Grid.Col span={6} data-name={"Replacement Text"}>
           <Input.Wrapper label="replacement text">
             <Input
-              value={replaceValue}
-              onChange={setReplaceValue}
+              value={replacementValue}
+              onChange={setReplacementValue}
               placeholder="replacement text"
               data-test="regex-replacement-text"
+            />
+          </Input.Wrapper>
+        </Grid.Col>
+        <Grid.Col span={12} data-name={"Target Replace"}>
+          <Input.Wrapper label="Target Replace">
+            <Switch
+              checked={replace}
+              onChange={() => setReplace(!replace)}
+              placeholder="target replace"
+              data-test="regex-target-replace"
             />
           </Input.Wrapper>
         </Grid.Col>
@@ -96,7 +114,7 @@ const RegexReplacer = ({ extension }: Props) => {
             fullWidth
             h={60}
             disabled={
-              regex && regexInput.length > 0 && regex.toString() !== "/(?:)/"
+              regex && regexInput?.length > 0 && regex.toString() !== "/(?:)/"
                 ? false
                 : true
             }
@@ -105,24 +123,52 @@ const RegexReplacer = ({ extension }: Props) => {
         </Grid.Col>
         <Grid.Col span={6} data-name={"Copy Preview"}>
           <CopyComponent
-            label={preview}
+            label={preview ? preview : "No matches"}
             type="string"
             value={preview}
             fullWidth
             h={60}
-            disabled={preview.length > 0 ? false : true}
+            disabled={preview?.length > 0 ? false : true}
             data-test="regex-preview"
           />
         </Grid.Col>
-        <Grid.Col span={12} data-name={"replaceFunction"}>
-          <CopyComponent
-            label={`.replace(${regex}, "${replaceValue}")`}
-            value={`.replace(${regex}, "${replaceValue}")`}
-            type="function"
-            fullWidth
-            data-test="regex-function"
-          />
-        </Grid.Col>
+        {replace ? (
+          <Grid.Col span={12} data-name={"replaceFunction"}>
+            <CopyComponent
+              label={
+                regex instanceof RegExp
+                  ? `.replace(${regex}, "${replacementValue}")`
+                  : `.replace("${regex}", "${replacementValue}")`
+              }
+              value={
+                regex instanceof RegExp
+                  ? `.replace(${regex}, "${replacementValue}")`
+                  : `.replace("${regex}", "${replacementValue}")`
+              }
+              type="function"
+              fullWidth
+              data-test="regex-replace-function"
+            />
+          </Grid.Col>
+        ) : (
+          <Grid.Col span={12} data-name={"matchFunction"}>
+            <CopyComponent
+              label={
+                regex instanceof RegExp
+                  ? `.match(${regex})`
+                  : `.match("${regex}")`
+              }
+              value={
+                regex instanceof RegExp
+                  ? `.match(${regex})`
+                  : `.match("${regex}")`
+              }
+              type="function"
+              fullWidth
+              data-test="regex-match-function"
+            />
+          </Grid.Col>
+        )}
       </Grid>
     </Card>
   )

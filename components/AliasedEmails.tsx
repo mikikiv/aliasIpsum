@@ -1,12 +1,10 @@
 import type { AliasType } from "@/components/types"
-import { colorSelector } from "@/utils/colorSelector"
 import { faker } from "@faker-js/faker"
 import {
   Box,
   Button,
   Card,
   Chip,
-  CopyButton,
   Flex,
   Grid,
   Input,
@@ -115,8 +113,8 @@ export default function InputCreator({ extension }: Props) {
               : realtimeTimestamp
           )
         : selectedAlias
-          ? aliasedEmail(email, selectedAlias)
-          : email
+        ? aliasedEmail(email, selectedAlias)
+        : email
     )
   }, [email, selectedAlias, realtimeTimestamp, timestampEnabled])
 

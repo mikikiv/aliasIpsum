@@ -25,7 +25,7 @@ import {
 } from "@tabler/icons-react"
 import { useCallback, useEffect, useState } from "react"
 import { CopyComponent } from "@/components/global/CopyComponent"
-import EmailAlias from "@/utils/aliasEmail"
+import AliasEmail from "@/utils/aliasEmail"
 
 type Props = { extension?: boolean }
 
@@ -74,17 +74,13 @@ export default function InputCreator({ extension }: Props) {
     }
   }
 
-  const useRealtimeTimestamp = () => {
-    const [realtimeTimestamp, setRealtimeTimestamp] = useState("")
+  const useEmailAliasTimestamp = () => {
+    const [timestamp, setTimestamp] = useState("")
 
     useEffect(() => {
       const updateTimestamp = () => {
-        const updatingTimestamp = new Date()
-          .toLocaleString("en-US", { hourCycle: "h24" })
-          .replace(/[:\/]+/g, ".")
-          .replace(/,/g, "-")
-          .replace(/\s+/g, "")
-        setRealtimeTimestamp(updatingTimestamp)
+        const tempAlias = new AliasEmail("temp@example.com")
+        setTimestamp(tempAlias.getTimestamp())
       }
 
       updateTimestamp()
@@ -92,26 +88,20 @@ export default function InputCreator({ extension }: Props) {
       return () => clearInterval(interval)
     }, [])
 
-    return realtimeTimestamp
+    return timestamp
   }
 
-  const realtimeTimestamp = useRealtimeTimestamp()
+  const realtimeTimestamp = useEmailAliasTimestamp()
 
   useEffect(() => {
     setFinalEmail(() => {
       if (!selectedAlias && !timestampEnabled) return email
 
-      const alias = selectedAlias
-        ? timestampEnabled
-          ? `${selectedAlias}-${realtimeTimestamp}`
-          : selectedAlias
-        : timestampEnabled
-        ? realtimeTimestamp
-        : new Date().getTime().toString()
-
-      return new EmailAlias(email, alias).getAliasedEmail()
+      return new AliasEmail(email, selectedAlias).getAliasedEmail(
+        timestampEnabled && !!realtimeTimestamp
+      )
     })
-  }, [email, selectedAlias, realtimeTimestamp, timestampEnabled])
+  }, [email, selectedAlias, timestampEnabled, realtimeTimestamp])
 
   const generateRandomAlias = () => {
     const generatedWord = faker.word.sample({
@@ -315,7 +305,7 @@ export default function InputCreator({ extension }: Props) {
             type="email"
             size={extension ? "xs" : "md"}
             fullWidth
-            id="copyEmail"
+            data-test="copyEmail"
             h={80}
             maw={extension ? "330px" : "100%"}
             rightIcon={<IconCopy />}

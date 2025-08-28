@@ -18,8 +18,8 @@ test.describe("aliased emails", () => {
     await page.press('input[type="alias"]', "Enter")
     await page.getByText("Time").click()
     await expect(page.getByTestId("timestampEnabled")).not.toBeChecked()
-    expect(await page.textContent("#copyEmail")).toEqual(aliasedEmail)
-    await page.click("#copyEmail")
+    await expect(page.getByTestId("copyEmail")).toContainText(aliasedEmail)
+    await page.getByTestId("copyEmail").click()
     const savedLocalStorage = (await page.context().storageState()).origins[0]
     expect(savedLocalStorage.localStorage.length).toBe(5)
     const expectedStorage: TotalLocalStorage = [
@@ -83,8 +83,8 @@ test.describe("aliased emails", () => {
     await page.press('input[type="alias"]', "Enter")
     await page.getByText("Time").click()
     await expect(page.getByTestId("timestampEnabled")).not.toBeChecked()
-    expect(await page.textContent("#copyEmail")).toEqual(aliasedEmail)
-    await page.click("#copyEmail")
+    await expect(page.getByTestId("copyEmail")).toContainText(aliasedEmail)
+    await page.getByTestId("copyEmail").click()
     const savedLocalStorage = (await page.context().storageState()).origins[0]
     const copyHistory = savedLocalStorage.localStorage.find(
       (item) => item.name === "copyHistory"
@@ -111,8 +111,9 @@ test.describe("aliased emails", () => {
     // disable the timestamp
     await page.getByText("Time").click()
     await expect(page.getByTestId("timestampEnabled")).not.toBeChecked()
-    expect(await page.textContent("#copyEmail")).toEqual(aliasedEmail)
-    await page.click("#copyEmail")
+    await expect(page.getByTestId("copyEmail")).toContainText(aliasedEmail)
+    await page.getByTestId("copyEmail").click()
+
     const handle = await page.evaluateHandle(() =>
       navigator.clipboard.readText()
     )
@@ -132,7 +133,8 @@ test.describe("aliased emails with timestamp", () => {
 
   test("the timestamp saved is correct", async ({ page }) => {
     await page.fill('input[type="email"]', email)
-    await page.click("#copyEmail")
+    await page.getByTestId("copyEmail").click()
+
     const now = new Date()
     // compare the timestamp in the email object in localstorage with the current time
     const savedLocalStorage = (await page.context().storageState()).origins[0]

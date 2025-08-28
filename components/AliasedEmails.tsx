@@ -23,9 +23,9 @@ import {
   IconSettingsCancel,
   IconX,
 } from "@tabler/icons-react"
-import aliasedEmail from "aliased-email"
 import { useCallback, useEffect, useState } from "react"
 import { CopyComponent } from "@/components/global/CopyComponent"
+import EmailAlias from "@/utils/aliasEmail"
 
 type Props = { extension?: boolean }
 
@@ -52,12 +52,6 @@ export default function InputCreator({ extension }: Props) {
 
   const handleChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value)
-    setFinalEmail(
-      aliasedEmail(
-        e.target.value,
-        selectedAlias || new Date().getTime().toString()
-      )
-    )
   }
 
   const handleCreateAlias = (query: string) => {
@@ -104,18 +98,19 @@ export default function InputCreator({ extension }: Props) {
   const realtimeTimestamp = useRealtimeTimestamp()
 
   useEffect(() => {
-    setFinalEmail(
-      timestampEnabled
-        ? aliasedEmail(
-            email,
-            selectedAlias
-              ? `${selectedAlias}-${realtimeTimestamp}`
-              : realtimeTimestamp
-          )
-        : selectedAlias
-        ? aliasedEmail(email, selectedAlias)
-        : email
-    )
+    setFinalEmail(() => {
+      if (!selectedAlias && !timestampEnabled) return email
+
+      const alias = selectedAlias
+        ? timestampEnabled
+          ? `${selectedAlias}-${realtimeTimestamp}`
+          : selectedAlias
+        : timestampEnabled
+        ? realtimeTimestamp
+        : new Date().getTime().toString()
+
+      return new EmailAlias(email, alias).getAliasedEmail()
+    })
   }, [email, selectedAlias, realtimeTimestamp, timestampEnabled])
 
   const generateRandomAlias = () => {

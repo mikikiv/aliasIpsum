@@ -80,10 +80,19 @@ export default defineConfig({
       },
     },
 
-    // {
-    //   name: "extension firefox",
-    //   use: { ...devices["Desktop Firefox"], baseURL: "http://localhost:3000/extension" },
-    // },
+    {
+      name: "extension firefox",
+      use: {
+        ...devices["Desktop Firefox"],
+        baseURL: "http://localhost:3000/extension",
+        launchOptions: {
+          firefoxUserPrefs: {
+            "dom.events.asyncClipboard.readText": true,
+            "dom.events.testing.asyncClipboard": true,
+          },
+        },
+      },
+    },
 
     // {
     //   name: "extension webkit",

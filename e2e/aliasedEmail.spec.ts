@@ -1,9 +1,9 @@
+import test, { expect } from "@playwright/test"
 import type {
   AliasType,
   CopyHistoryType,
   TotalLocalStorage,
 } from "@/components/types"
-import test, { expect } from "@playwright/test"
 
 const email = "test@example.com"
 const aliasedEmail = "test+SugarFire@example.com"
@@ -57,12 +57,12 @@ test.describe("aliased emails", () => {
 
     for (const key in expectedStorageMap) {
       if (key === "copyHistory") {
-        //@ts-ignore
+        //@ts-expect-error
         const expectedCopyHistory: CopyHistoryType = expectedStorageMap[key]
         const storedCopyHistory: CopyHistoryType = savedLocalStorageMap[key]
         expect(storedCopyHistory).toMatchObject(expectedCopyHistory)
       } else if (key === "aliases") {
-        //@ts-ignore
+        //@ts-expect-error
         const expectedAliases: AliasType[] = expectedStorageMap[key]
         const storedAliases: AliasType[] = savedLocalStorageMap[key]
         expect(storedAliases).toMatchObject(expectedAliases)
@@ -143,7 +143,7 @@ test.describe("aliased emails with timestamp", () => {
     )
     const parsedCopyHistory = copyHistory ? JSON.parse(copyHistory.value) : []
     const timestamp = parsedCopyHistory[0].timestamp
-    const date = new Date(Number.parseInt(timestamp))
+    const date = new Date(Number.parseInt(timestamp, 10))
 
     expect((date.getUTCMinutes() + date.getUTCSeconds()) / 10000).toBeCloseTo(
       (now.getUTCMinutes() + now.getUTCSeconds()) / 10000,

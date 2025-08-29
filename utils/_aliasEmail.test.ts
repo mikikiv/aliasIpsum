@@ -13,11 +13,13 @@ describe("EmailAlias", () => {
     })
 
     it("should create instance with email only and generate default alias", () => {
-      expect(workEmailAlias.getAliasedEmail()).toBe("test+work@example.com")
+      expect(workEmailAlias.getAliasedEmail(false)).toBe(
+        "test+work@example.com"
+      )
     })
 
     it("should handle empty string alias", () => {
-      expect(emptyEmailAlias.getAliasedEmail()).toBe(emailAddress)
+      expect(emptyEmailAlias.getAliasedEmail(false)).toBe(emailAddress)
     })
 
     it("It includes a timestamp when it should for simple aliases", () => {
@@ -25,11 +27,15 @@ describe("EmailAlias", () => {
     })
 
     it("It includes a timestamp when it should for added aliases", () => {
-      expect(workEmailAlias.getAliasedEmail(true)).toContain(timestamp)
+      const timestampedEmail = workEmailAlias.getAliasedEmail(true)
+      expect(timestampedEmail).toContain(timestamp)
+      expect(timestampedEmail).not.toMatch(/test\+-.+@example.com/)
     })
 
     it("It includes a timestamp when it should when alias provided is empty", () => {
-      expect(emptyEmailAlias.getAliasedEmail(true)).toContain(timestamp)
+      const timestampedEmail = emptyEmailAlias.getAliasedEmail(true)
+      expect(timestampedEmail).toContain(timestamp)
+      expect(timestampedEmail).not.toMatch(/test\+-.+@example.com/)
     })
   })
 
@@ -55,6 +61,12 @@ describe("EmailAlias", () => {
       }
     })
 
+    it("should return empty string when email is invalid", () => {
+      const invalidEmail = "invalid-email@"
+
+      expect(new AliasEmail(invalidEmail).getAliasedEmail(true)).toBeFalsy()
+    })
+
     it("should reject emails that already have aliases", () => {
       const aliasedEmails = [
         "user+alias@example.com",
@@ -70,19 +82,21 @@ describe("EmailAlias", () => {
   describe("Alias Generation", () => {
     it("should sanitize alias by replacing spaces with dots", () => {
       const emailAlias = new AliasEmail("user@example.com", "work space")
-      expect(emailAlias.getAliasedEmail()).toBe("user+work.space@example.com")
+      expect(emailAlias.getAliasedEmail(false)).toBe(
+        "user+work.space@example.com"
+      )
     })
 
     it("should handle multiple spaces in alias", () => {
       const emailAlias = new AliasEmail("user@example.com", "work  space   tag")
-      expect(emailAlias.getAliasedEmail()).toBe(
+      expect(emailAlias.getAliasedEmail(false)).toBe(
         "user+work.space.tag@example.com"
       )
     })
 
     it("should trim whitespace from alias", () => {
       const emailAlias = new AliasEmail("user@example.com", "  work  ")
-      expect(emailAlias.getAliasedEmail()).toBe("user+work@example.com")
+      expect(emailAlias.getAliasedEmail(false)).toBe("user+work@example.com")
     })
   })
 
@@ -90,24 +104,24 @@ describe("EmailAlias", () => {
     it("should allow updating alias", () => {
       const emailAlias = new AliasEmail("user@example.com", "initial")
 
-      expect(emailAlias.getAliasedEmail()).toBe("user+initial@example.com")
+      expect(emailAlias.getAliasedEmail(false)).toBe("user+initial@example.com")
 
       emailAlias.setAlias("updated")
 
-      expect(emailAlias.getAliasedEmail()).toBe("user+updated@example.com")
+      expect(emailAlias.getAliasedEmail(false)).toBe("user+updated@example.com")
     })
 
     it("should handle empty alias update", () => {
       const emailAlias = new AliasEmail("user@example.com", "initial")
       emailAlias.setAlias("")
-      expect(emailAlias.getAliasedEmail()).toBe("user@example.com")
+      expect(emailAlias.getAliasedEmail(false)).toBe("user@example.com")
     })
   })
 
   describe("Edge Cases", () => {
     it("should handle special characters in alias", () => {
       const emailAlias = new AliasEmail("user@example.com", "work@#$%^&*()")
-      expect(emailAlias.getAliasedEmail()).toBe(
+      expect(emailAlias.getAliasedEmail(false)).toBe(
         "user+work@#$%^&*()@example.com"
       )
     })
@@ -115,17 +129,21 @@ describe("EmailAlias", () => {
     it("should handle very long aliases", () => {
       const longAlias = "a".repeat(100)
       const emailAlias = new AliasEmail("user@example.com", longAlias)
-      expect(emailAlias.getAliasedEmail()).toBe(`user+${longAlias}@example.com`)
+      expect(emailAlias.getAliasedEmail(false)).toBe(
+        `user+${longAlias}@example.com`
+      )
     })
 
     it("should handle unicode characters in email", () => {
       const emailAlias = new AliasEmail("user.name@example.com", "work")
-      expect(emailAlias.getAliasedEmail()).toBe("user.name+work@example.com")
+      expect(emailAlias.getAliasedEmail(false)).toBe(
+        "user.name+work@example.com"
+      )
     })
 
     it("should preserve email case", () => {
       const emailAlias = new AliasEmail("User@Example.COM", "work")
-      expect(emailAlias.getAliasedEmail()).toBe("User+work@Example.COM")
+      expect(emailAlias.getAliasedEmail(false)).toBe("User+work@Example.COM")
     })
   })
 

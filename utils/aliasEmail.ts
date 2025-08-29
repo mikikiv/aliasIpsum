@@ -3,7 +3,8 @@ class AliasEmail {
   private aliasedEmailPattern: RegExp
   private email: string
   private alias: string
-  private timestamp: string
+  private formattedTimestamp: string
+  rawTimestamp: Date
 
   constructor(email: string, alias?: string) {
     this.emailPattern = /^[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
@@ -11,9 +12,13 @@ class AliasEmail {
       /^[a-zA-Z0-9._%-]\+[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
     this.email = email
     this.alias = alias || ""
-    this.timestamp = new Date()
+
+    const timestamp = new Date()
+    this.rawTimestamp = timestamp
+
+    this.formattedTimestamp = timestamp
       .toLocaleString("en-US", { hourCycle: "h24" })
-      .replace(/[:\/]+/g, ".")
+      .replace(/[:/]+/g, ".")
       .replace(/,/g, "-")
       .replace(/\s+/g, "")
   }
@@ -32,12 +37,22 @@ class AliasEmail {
     return text.trim().replace(/\s+/g, ".")
   }
 
-  private addAliasToEmail() {
-    this.alias = this.sanitizeText(this.alias)
+  private generateAlias(withTimestamp: boolean): string {
+    const sanitizedAlias = this.sanitizeText(this.alias)
+    const combinedAlias = `${sanitizedAlias}-${this.formattedTimestamp}`
 
-    const addAliasText = this.alias.length > 0 ? `+${this.alias}` : ""
+    const finalAlias = withTimestamp
+      ? sanitizedAlias
+        ? combinedAlias
+        : this.formattedTimestamp
+      : sanitizedAlias
 
-    return this.email.replace(/@/, `${addAliasText}@`)
+    return finalAlias
+  }
+
+  private formatAliasedEmail(alias: string): string {
+    if (!alias) return this.email
+    return this.email.replace(/@/, `+${alias}@`)
   }
 
   setAlias(newAlias: string) {
@@ -45,15 +60,19 @@ class AliasEmail {
   }
 
   getTimestamp() {
-    return this.timestamp
+    return this.formattedTimestamp
   }
 
-  getAliasedEmail(withTimestamp?: boolean): string {
-    if (!this.validateEmail) {
-      return "Email is invalid"
+  getRawTimestamp() {
+    return this.formattedTimestamp
+  }
+
+  public getAliasedEmail(withTimestamp: boolean): string {
+    if (!this.validateEmail()) {
+      return ""
     }
-    this.alias = withTimestamp ? `${this.alias}-${this.timestamp}` : this.alias
-    return this.addAliasToEmail()
+    const alias = this.generateAlias(withTimestamp)
+    return this.formatAliasedEmail(alias)
   }
 
   getEmail(): string {

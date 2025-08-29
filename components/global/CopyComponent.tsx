@@ -35,7 +35,7 @@ export const CopyComponent = ({ value, type, label, ...rest }: Props) => {
         id: history.length,
         type: type,
         value,
-        timestamp: new Date().getTime(),
+        timestamp: Date.now(),
       },
     ])
   }

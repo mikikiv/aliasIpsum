@@ -21,14 +21,24 @@ faster than other tools. Lets focus on getting the data that matters copied quic
 
 ---
 
-## Contribute
+## Build Instructions
 
-Fork/Branch this repo.
+**Requirements**
+- OS: macOS or Linux
+- Node.js: See `.nvmrc` for exact version
+- npm: Included with Node.js
 
-`npm run dev` to get the site running in localhost.
+**Steps**
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Build the extension:
+   ```bash
+   npm run build:extension
+   ```
+   This runs `extensionReqs/build.sh` to generate the extension.
+3. Load the unpacked extension from the generated `extension/` directory.
 
-To develop the extension, use the `/extension` page.
-
-Chrome browsers allow user to manually upload an extension as a folder.
-Run `npm run build:extension` to export the `/extension` page as an
-extension and upload the extension folder into the extension manager in Chrome.
+The browser extension is a limited version of the website served when running `npm run dev`.
+Visit the /extension page when running the site locally.

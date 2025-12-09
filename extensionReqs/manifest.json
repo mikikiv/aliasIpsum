@@ -18,6 +18,9 @@
   "permissions": ["clipboardWrite"],
   "browser_specific_settings": {
     "gecko": {
+      "data_collection_permissions": {
+        "required": ["none"]
+      },
       "id": "{5FB5F59C-CA59-4E32-B6EC-C281B6536C6B}"
     }
   }

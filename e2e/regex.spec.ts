@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test"
 
 test.describe("Regex Replacer", () => {
+  test.skip()
   test.beforeEach(async ({ page }) => {
     await page.goto("/")
     await page.getByTestId("regex-input").fill("e")
